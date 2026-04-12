@@ -7,10 +7,10 @@ class DatabaseSettings(BaseSettings):
 
     model_config = SettingsConfigDict(env_prefix="DATABASE_", case_sensitive=False)
 
-    host: str = "postgres"
+    host: str = "localhost"
     port: int = 5432
-    user: str
-    password: str
+    user: str = "user"
+    password: str = "password"
     name: str = "second_brain"
 
     echo: bool = False

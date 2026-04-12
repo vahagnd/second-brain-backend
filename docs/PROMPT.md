@@ -1,161 +1,134 @@
-You are a senior backend engineer building a production-quality MVP called "Second Brain API".
+You are a senior backend/devops engineer.
 
-You MUST strictly follow the rules defined in the `.clinerules/` directory and the `PROJECT_SPEC.md`.
+We already have a minimal system:
 
----
+* sb_gateway (FastAPI app, contains all logic for now)
+* second_brain_db (PostgreSQL database layer / schema if any)
+* No services layer
+* No AI
+* No MinIO
 
-# 🎯 Objective
-
-Create a fully working backend foundation for the project.
-
-This includes:
-
-* FastAPI application setup
-* PostgreSQL connection using SQLAlchemy
-* basic project structure (already defined in spec)
-* initial Notes model + CRUD foundation
-* working /health endpoint
-* working /notes endpoint (create + list)
+Your task is to containerize the system using Docker.
 
 ---
 
-# ⚙️ Hard Constraints
+# Goals
 
-* Python 3.11+
-* MUST use uv (Astral package manager)
-* PostgreSQL only (no SQLite fallback)
-* SQLAlchemy ORM only
-* Pydantic for schemas
-* No Docker
-* No authentication
-* No frontend
-* No embeddings
-* No vector database
+Create a fully working local Docker setup where:
+
+* Gateway runs in a container
+* PostgreSQL runs in a container
+* Gateway connects to PostgreSQL via Docker network
+* Everything runs with a single command: docker compose up
 
 ---
 
-# 📦 Required Setup Steps
+# Constraints
 
-## 1. Initialize project using uv
-
-* assume uv is already installed
-* use:
-
-  * uv init (if needed)
-  * uv add for dependencies
-
-## 2. Install dependencies
-
-Include:
-
-* fastapi
-* uvicorn
-* sqlalchemy
-* psycopg2-binary
-* pydantic
-* python-dotenv
+* No Kubernetes
+* No production infra complexity
+* No microservices splitting changes
+* No rewriting application logic
+* Keep everything minimal and local-dev focused
 
 ---
 
-# 🏗️ Architecture Requirements
+# Required Output
 
-Follow strict layering:
+## 1. docker-compose.yml
 
-* api/ → routes only
-* services/ → business logic
-* models/ → DB tables
-* schemas/ → validation
-* db.py → database connection only
+Must include:
 
-NO business logic in routes.
+### Services:
 
----
+* db (PostgreSQL 16 official image)
+* gateway (FastAPI app container)
 
-# 🧠 Core Features to Implement First
+### Requirements:
 
-## 1. Health check
-
-GET /health
-→ returns {"status": "ok"}
+* DB data must persist using Docker volume
+* Gateway must depend on DB
+* Gateway must use internal Docker network to connect to DB
 
 ---
 
-## 2. Notes
+## 2. Gateway Dockerfile
 
-### Create note
-
-POST /notes
-Body:
-
-* content: string
-
-Stores note in PostgreSQL.
+* Python 3.11 slim
+* Install dependencies using uv (Astral package manager)
+* Copy app code
+* Run FastAPI using uvicorn
 
 ---
 
-### List notes
+## 3. Environment handling
 
-GET /notes
-Returns all notes ordered by newest first.
+Gateway must use the following environment variables:
 
----
+* DATABASE_HOST
+* DATABASE_PORT
+* DATABASE_NAME
+* DATABASE_USER
+* DATABASE_PASSWORD
 
-# 🗄️ Database Model
+IMPORTANT:
 
-Table: notes
+* DATABASE_HOST must be set to "db" inside Docker
+* NOT localhost
 
-* id (int primary key)
-* content (text)
-* created_at (timestamp default now)
-
----
-
-# 🔌 Database Rules
-
-* Use DATABASE_URL from environment variables
-* Use SQLAlchemy session management properly
-* No global sessions leaking
+The application must construct DATABASE_URL internally using pydantic-settings.
 
 ---
 
-# 🧼 Code Quality Rules
+## 4. Database container
 
-* Keep functions small
-* No unnecessary abstraction layers
-* No overengineering
-* No premature optimization
-* Clear naming only
-
----
-
-# 📁 Output Requirement
-
-Generate full working code for:
-
-* all required files
-* correct imports
-* runnable project
-
-Ensure:
-
-* `uv run python run.py` starts server successfully
-* `/health` works immediately
-* `/notes` CRUD works without modification
+* Use postgres:16
+* Set:
+  POSTGRES_USER=user
+  POSTGRES_PASSWORD=password
+  POSTGRES_DB=second_brain
+* Expose port 5432
 
 ---
 
-# 🚫 Do NOT include
+## 5. Settings requirement
 
-* embeddings
-* AI logic yet
-* vector search
-* authentication
-* frontend
-* Docker
-* extra features beyond spec
+The application must use pydantic-settings.
+
+Rules:
+
+* Do NOT use os.getenv
+* Do NOT use python-dotenv
+* All configuration must be in settings.py
+* DATABASE_URL must be a computed property from individual env vars
 
 ---
 
-# 🧭 After completion
+## 6. Networking rules
 
-Stop after backend foundation is working. Do not expand scope.
+* Gateway must wait for DB availability (depends_on is enough for now)
+* No external network config needed
+
+---
+
+## 7. Output expectation
+
+After setup:
+
+* docker compose up builds everything
+* gateway accessible on localhost:8000
+* /health endpoint works
+* /notes endpoints work
+* DB persists between restarts
+
+---
+
+# Do NOT include
+
+* Kubernetes
+* Redis
+* MinIO
+* multiple services beyond gateway + db
+* async refactors
+* architecture changes
+* service layer reintroduction

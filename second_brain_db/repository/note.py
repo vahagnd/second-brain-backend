@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from db.models import Note
+from second_brain_db.db.models import Note
 
 
 class NoteRepository:

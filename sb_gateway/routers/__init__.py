@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 
-from routers import health, notes
+from sb_gateway.routers import health, notes
 
 
 def init_routers(app: FastAPI):

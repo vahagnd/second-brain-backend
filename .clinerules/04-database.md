@@ -2,7 +2,6 @@
 
 ## Database
 - PostgreSQL only
-- No SQLite fallback
 
 ## Environment variable
 DATABASE_URL must be used
@@ -13,3 +12,4 @@ DATABASE_URL must be used
 - id (serial primary key)
 - content (text)
 - created_at (timestamp)
+- updated_at (timestamp)

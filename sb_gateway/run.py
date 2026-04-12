@@ -1,4 +1,4 @@
 import uvicorn
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8020, reload=True)
+    uvicorn.run("sb_gateway.app:app", host="0.0.0.0", port=8000, reload=True)

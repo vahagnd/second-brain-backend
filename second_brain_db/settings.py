@@ -1,5 +1,4 @@
 from pydantic import computed_field
-from pydantic.v1 import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,7 +10,7 @@ class DatabaseSettings(BaseSettings):
     host: str = "postgres"
     port: int = 5432
     user: str
-    password: SecretStr
+    password: str
     name: str = "second_brain"
 
     echo: bool = False
@@ -20,14 +19,14 @@ class DatabaseSettings(BaseSettings):
     @property
     def sqlalchemy_uri_v2(self) -> str:
         """Return SQLAlchemy URI string representation."""
-        uri = f"postgresql+asyncpg://{self.user}:{self.password.get_secret_value()}@{self.host}:{self.port}/{self.name}"
+        uri = f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
         return uri
 
     @computed_field
     @property
     def sqlalchemy_uri_v2_sync(self) -> str:
         """Return SQLAlchemy URI string representation."""
-        uri = f"postgresql+psycopg://{self.user}:{self.password.get_secret_value()}@{self.host}:{self.port}/{self.name}"
+        uri = f"postgresql+psycopg2://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
         return uri
 
 

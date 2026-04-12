@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 from sb_gateway.dependencies.repositories import NoteRepositoryDependency
 from sb_gateway.models.note import NoteCreatedResponse, NoteCreate
-from second_brain_db.db import get_db
 from sb_gateway.models import NoteCreate
 
 router = APIRouter(prefix="/notes", tags=["notes"])

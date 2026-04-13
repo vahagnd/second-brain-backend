@@ -90,6 +90,7 @@ convention = "numpy"
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S", "D", "INP001", "PLR2004", "ARG002", "RUF003", "ERA001", "ANN", "RUF002"]
 "test_files/*" = ["D", "INP001"]
+"scripts/*" = ["ALL"]
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.

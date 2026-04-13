@@ -19,13 +19,17 @@ class DatabaseSettings(BaseSettings):
     @property
     def sqlalchemy_uri_v2(self) -> str:
         """Return SQLAlchemy URI string representation."""
-        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
+        return (
+            f"postgresql+asyncpg://{self.user}:{self.password.get_secret_value()}@{self.host}:{self.port}/{self.name}"
+        )
 
     @computed_field
     @property
     def sqlalchemy_uri_v2_sync(self) -> str:
         """Return SQLAlchemy URI string representation."""
-        return f"postgresql+psycopg2://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
+        return (
+            f"postgresql+psycopg2://{self.user}:{self.password.get_secret_value()}@{self.host}:{self.port}/{self.name}"
+        )
 
 
 db_settings = DatabaseSettings()

@@ -1,12 +1,16 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 class NoteCreate(BaseModel):
     content: str
 
 
-class NoteCreatedResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    content: str
+class NoteCreatedResponse(NoteCreate):
+    id: int
     created: bool = True
+
+
+class Note(BaseModel):
+    id: int
+    content: str
+    created_at: str

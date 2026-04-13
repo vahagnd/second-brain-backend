@@ -57,3 +57,4 @@
 
 
 TODO: add pre-commit hoooks, editorconfig and other inital repo setup things if needed
+TODO: check out groq

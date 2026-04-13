@@ -1,7 +1,9 @@
-from typing import Annotated, Generator
+from collections.abc import Generator
+from typing import Annotated
 
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
+
 from second_brain_db.db.engine import session_maker
 
 

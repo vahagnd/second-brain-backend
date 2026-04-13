@@ -1,4 +1,4 @@
-"""Models package"""
+"""Models package."""
 
 from sb_gateway.models.note import NoteCreate, NoteCreatedResponse
 

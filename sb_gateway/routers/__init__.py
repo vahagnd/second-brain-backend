@@ -1,4 +1,4 @@
-"""Routes module"""
+"""Routes module."""
 
 from fastapi import FastAPI
 

@@ -1,4 +1,4 @@
-"""Repository package"""
+"""Repository package."""
 
 from second_brain_db.repository.note import NoteRepository
 

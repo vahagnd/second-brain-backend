@@ -5,4 +5,6 @@ start-build:
 stop:
 	docker compose down
 restart:
+	docker compose down && docker compose up
+rebuild:
 	docker compose down && docker compose up --build

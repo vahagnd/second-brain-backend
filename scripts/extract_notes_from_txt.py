@@ -1,4 +1,5 @@
 from pathlib import Path
+from urllib import response
 
 import httpx
 
@@ -32,4 +33,6 @@ def notes_stream(file_path: Path):
 file_path = Path(FILES_DIR) / FILE
 
 for note in notes_stream(file_path):
-    httpx.post("http://localhost:8000/notes", json={"content": note})
+    response = httpx.post("http://localhost:8000/notes", json={"content": note})
+    print(response.status_code)
+    print(response.text)

@@ -2,7 +2,6 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from second_brain_db.db.models import Note
-from second_brain_db.settings import similarity_search_settings
 from second_brain_db.utils.vector import cosine_similarity
 
 
@@ -53,7 +52,10 @@ class NoteRepository:
         return result.scalars().all()
 
     def search_by_embedding(
-        self, query_embedding: list[float], top_k: int = similarity_search_settings.top_k
+        self,
+        query_embedding: list[float],
+        top_k: int = 5,
+        threshold: float | None = None,
     ) -> list[(Note, float)]:
         """
         Search for notes by semantic similarity using embeddings.
@@ -64,6 +66,8 @@ class NoteRepository:
             The embedding vector of the search query.
         top_k : int, optional
             Maximum number of results to return, by default 5.
+        threshold : float, optional
+            Minimum cosine similarity score to include a note in the results, by default None (no threshold).
 
         Returns
         -------
@@ -80,6 +84,10 @@ class NoteRepository:
 
         # Compute similarity scores
         similarities = [(note, cosine_similarity(query_embedding, note.embedding)) for note in notes_with_embeddings]
+
+        # Filter by threshold if provided
+        if threshold is not None:
+            similarities = [item for item in similarities if item[1] >= threshold]
 
         # Sort by similarity (descending)
         similarities.sort(key=lambda x: x[1], reverse=True)

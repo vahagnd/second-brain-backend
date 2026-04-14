@@ -9,4 +9,14 @@ class AppSettings(BaseSettings):
     api_prefix: str = "/api/v1"
 
 
+class SimilaritySearchSettings(BaseSettings):
+    """Settings for similarity search."""
+
+    model_config = SettingsConfigDict(env_prefix="SIMILARITY_SEARCH_", case_sensitive=False)
+
+    top_k: int = 5
+    threshold: float = 0.95
+
+
 app_settings = AppSettings()
+similarity_search_settings = SimilaritySearchSettings()

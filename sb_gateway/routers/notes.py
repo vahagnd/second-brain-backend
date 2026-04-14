@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, Query, status
 from sb_gateway.dependencies.embedding import EmbeddingServiceDependency
 from sb_gateway.dependencies.repositories import NoteRepositoryDependency
 from sb_gateway.models.note import Note, NoteCreate, NoteCreatedResponse, NoteListResponse, NoteWithScore
+from sb_gateway.settings import similarity_search_settings
 
 router = APIRouter(prefix="/notes", tags=["notes"])
 
@@ -14,13 +15,31 @@ def create_note(
     note_create: NoteCreate, notes_repo: NoteRepositoryDependency, embedding_service: EmbeddingServiceDependency
 ) -> NoteCreatedResponse:
     """Create a new note in db."""
-    if notes_repo.search_by_content(note_create.content):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=f"Note with content '{note_create.content}' already exists"
-        )
-
     # Generate embedding from note content
     embedding = embedding_service.embed(note_create.content)
+
+    # Check for semantic duplicates before creating the note
+    duplicates = notes_repo.search_by_embedding(
+        query_embedding=embedding,
+        top_k=similarity_search_settings.top_k,
+        threshold=similarity_search_settings.threshold,
+    )
+
+    if duplicates:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "message": "Very similar notes already exist.",
+                "similar_notes": [
+                    {
+                        "id": note.id,
+                        "content": note.content,
+                        "score": score,
+                    }
+                    for note, score in duplicates
+                ],
+            },
+        )
 
     # Add note with embedding
     note = notes_repo.add(note_create.content, embedding=embedding)

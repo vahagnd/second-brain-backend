@@ -2,6 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from second_brain_db.db.models import Note
+from second_brain_db.settings import similarity_search_settings
+from second_brain_db.utils.vector import cosine_similarity
 
 
 class NoteRepository:
@@ -9,9 +11,9 @@ class NoteRepository:
         """Initialize the NoteRepository with a SQLAlchemy session."""
         self.session = session
 
-    def add(self, content: str) -> Note:
-        """Add a new note with the given content."""
-        note = Note(content=content)
+    def add(self, content: str, embedding: list[float] | None = None) -> Note:
+        """Add a new note with the given content and optional embedding."""
+        note = Note(content=content, embedding=embedding)
         self.session.add(note)
         self.session.commit()
         self.session.refresh(note)
@@ -49,3 +51,38 @@ class NoteRepository:
         stmt = select(Note).where(Note.content.ilike(f"%{query}%")).order_by(Note.created_at.desc())
         result = self.session.execute(stmt)
         return result.scalars().all()
+
+    def search_by_embedding(
+        self, query_embedding: list[float], top_k: int = similarity_search_settings.top_k
+    ) -> list[(Note, float)]:
+        """
+        Search for notes by semantic similarity using embeddings.
+
+        Parameters
+        ----------
+        query_embedding : list[float]
+            The embedding vector of the search query.
+        top_k : int, optional
+            Maximum number of results to return, by default 5.
+
+        Returns
+        -------
+        list[(Note, float)]
+            List of notes and their similarity scores ranked by cosine similarity (descending).
+        """
+        all_notes = self.get_all()
+
+        # Filter notes that have embeddings
+        notes_with_embeddings = [note for note in all_notes if note.embedding is not None]
+
+        if not notes_with_embeddings:
+            return []
+
+        # Compute similarity scores
+        similarities = [(note, cosine_similarity(query_embedding, note.embedding)) for note in notes_with_embeddings]
+
+        # Sort by similarity (descending)
+        similarities.sort(key=lambda x: x[1], reverse=True)
+
+        # Return top N results
+        return similarities[:top_k]

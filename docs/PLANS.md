@@ -11,7 +11,7 @@
 
 ## Next Goals (CRUD Completion)
 
-### 2. Update Note CANCELLED
+### ~~2. Update Note~~
 
 ---
 

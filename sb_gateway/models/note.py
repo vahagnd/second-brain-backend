@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -13,4 +15,13 @@ class NoteCreatedResponse(NoteCreate):
 class Note(BaseModel):
     id: int
     content: str
-    created_at: str
+
+
+class NoteWithScore(Note):
+    score: float
+
+
+class NoteListResponse(BaseModel):
+    total: int
+    search_type: Literal["like", "semantic"] | None = None
+    items: list[Note] | list[NoteWithScore]

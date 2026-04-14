@@ -8,4 +8,5 @@ class AppSettings(BaseSettings):
 
     api_prefix: str = "/api/v1"
 
+
 app_settings = AppSettings()

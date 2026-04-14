@@ -32,4 +32,22 @@ class DatabaseSettings(BaseSettings):
         )
 
 
+class EmbeddingSettings(BaseSettings):
+    """Settings for embedding service."""
+
+    model_config = SettingsConfigDict(env_prefix="EMBEDDING_", case_sensitive=False)
+
+    model: str = "all-MiniLM-L6-v2"
+
+
+class SimilaritySearchSettings(BaseSettings):
+    """Similarity search settings."""
+
+    model_config = SettingsConfigDict(env_prefix="SIMILARITY_SEARCH_", case_sensitive=False)
+
+    top_k: int = 5
+
+
 db_settings = DatabaseSettings()
+embedding_settings = EmbeddingSettings()
+similarity_search_settings = SimilaritySearchSettings()

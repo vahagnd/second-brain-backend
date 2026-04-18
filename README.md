@@ -1,19 +1,40 @@
-Start stack
+## Development Setup
+
+To set up the project for development, use the following `Makefile` commands:
+
+Initialize the project for development:
+   ```bash
+   make project-init-dev
+   ```
+
+Install only necessary packages:
+   ```bash
+   make project-init-run
+   ```
+
+## Docker
+
+Start the full stack:
 ```bash
 make start
 ```
 
-Stop stack
+Stop the stack:
 ```bash
 make stop
 ```
 
-Start stack with rebuild. Do this  you have changed code.
-```bash
-make start-build
-```
-
-Restart stack
+Restart:
 ```bash
 make restart
+```
+
+Start the full stack on bakcground:
+```bash
+make start-daemon
+```
+## Linting
+
+```bash
+make lint
 ```

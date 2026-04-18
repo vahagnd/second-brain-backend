@@ -2,4 +2,8 @@
 notes_files
 .editorconfig
 .pre-commit-config.yaml
-docs/
+
+PLANS.md
+GLOBAL_PLANS.md
+PROJECT_SPEC.md
+PROMPT.md

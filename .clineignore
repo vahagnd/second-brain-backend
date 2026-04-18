@@ -1,5 +1,5 @@
-PROMPT.md
 .env
 notes_files
 .editorconfig
 .pre-commit-config.yaml
+docs/

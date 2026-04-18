@@ -1,2 +1,3 @@
 - TODO: check out groq
 - TODO: hybrid search
+- TODO: add logging, also in docker compose dont forget

@@ -32,7 +32,7 @@ services:
     networks:
       - second_brain_network
 
-  gateway: # TODO: add logging
+  gateway:
     restart: unless-stopped
     build:
       context: .

@@ -1,9 +1,9 @@
 from typing import Annotated
 
 from fastapi.params import Depends
-
-from sb_gateway.dependencies.db import DBSessionDependency
 from second_brain_db.repository.note import NoteRepository
+
+from dependencies.db import DBSessionDependency
 
 
 def get_notes_repository(session: DBSessionDependency) -> NoteRepository:

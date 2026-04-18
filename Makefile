@@ -33,3 +33,6 @@ project-init-run:
 # ===================================================================
 lint:
 	uv run pre-commit run --all-files
+
+ruff-fix-all:
+	uv run ruff check --fix

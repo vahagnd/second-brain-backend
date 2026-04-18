@@ -1,0 +1,16 @@
+[project]
+name = "second-brain-gateway"
+version = "0.1.0"
+description = "API Gateway for Second Brain"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "second_brain_db",
+    "fastapi>=0.135.3",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.13.1",
+    "uvicorn>=0.44.0",
+]
+
+[tool.uv.sources]
+second-brain-db = { workspace = true }

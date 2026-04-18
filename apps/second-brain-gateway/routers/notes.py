@@ -1,11 +1,10 @@
 from typing import Annotated, Literal
 
+from dependencies.embedding import EmbeddingServiceDependency
+from dependencies.repositories import NoteRepositoryDependency
 from fastapi import APIRouter, HTTPException, Query, status
-
-from sb_gateway.dependencies.embedding import EmbeddingServiceDependency
-from sb_gateway.dependencies.repositories import NoteRepositoryDependency
-from sb_gateway.models.note import Note, NoteCreate, NoteCreatedResponse, NoteListResponse, NoteWithScore
-from sb_gateway.settings import similarity_search_settings
+from models.note import Note, NoteCreate, NoteCreatedResponse, NoteListResponse, NoteWithScore
+from settings import similarity_search_settings
 
 router = APIRouter(prefix="/notes", tags=["notes"])
 

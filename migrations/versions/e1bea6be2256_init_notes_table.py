@@ -1,7 +1,7 @@
 """init notes table
 
 Revision ID: e1bea6be2256
-Revises: 
+Revises:
 Create Date: 2026-04-12 23:35:55.378151
 
 """

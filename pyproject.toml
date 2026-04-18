@@ -11,12 +11,19 @@ dependencies = [
     "psycopg2-binary>=2.9.11",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.1",
-    "python-dotenv>=1.2.2",
     "sentence-transformers>=2.2.0",
     "sqlalchemy>=2.0.49",
     "uvicorn>=0.44.0",
     "torch",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "pre-commit",
+    "ipykernel",
+]
+
 
 [tool.uv.sources]
 torch = [

@@ -42,18 +42,9 @@ docker-compose.yml
 
 # Documentation
 docs/
-README.md
 
 # Other
 .clineignore
 PROMPT.md
 scripts/
 notes_files/
-
-# Old root-level source (replaced by packages/ and apps/)
-second_brain_db/
-sb_gateway/
-migrations/
-alembic.ini
-pyproject.toml
-uv.lock

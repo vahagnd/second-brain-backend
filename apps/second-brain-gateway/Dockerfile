@@ -8,11 +8,12 @@ ENV UV_LINK_MODE=copy
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y
+RUN apt-get update && apt-get install -y \
     && apt-get install -y --only-upgrade openssl libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install sources package
+COPY packages/ ./packages/
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \

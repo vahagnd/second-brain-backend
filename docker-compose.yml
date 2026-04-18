@@ -17,8 +17,15 @@ services:
     networks:
       - second_brain_network
 
-  migrations: # TODO: fix migrations service
-  # ...
+  migrations:
+    image: second-brain-gateway:latest
+    command: alembic upgrade head
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
@@ -30,6 +37,7 @@ services:
     build:
       context: .
       dockerfile: apps/second-brain-gateway/Dockerfile
+    image: second-brain-gateway:latest
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}

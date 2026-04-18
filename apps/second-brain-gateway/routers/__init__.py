@@ -1,7 +1,8 @@
 """Routes module."""
 
 from fastapi import FastAPI
-from sb_gateway.routers import health, notes
+
+from routers import health, notes
 
 
 def init_routers(app: FastAPI):

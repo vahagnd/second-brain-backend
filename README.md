@@ -19,11 +19,6 @@ Start the full stack:
 make start
 ```
 
-Start with rebuild (after code changes):
-```bash
-make start-build
-```
-
 Stop the stack:
 ```bash
 make stop
@@ -34,6 +29,10 @@ Restart:
 make restart
 ```
 
+Start the full stack on bakcground:
+```bash
+make start-daemon
+```
 ## Linting
 
 ```bash

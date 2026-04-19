@@ -8,7 +8,7 @@ resolution-markers = [
 
 [manifest]
 members = [
-    "second-brain",
+    "second-brain-backend",
     "second-brain-db",
     "second-brain-gateway",
 ]
@@ -1267,7 +1267,7 @@ wheels = [
 ]
 
 [[package]]
-name = "second-brain"
+name = "second-brain-backend"
 version = "0.1.0"
 source = { virtual = "." }
 

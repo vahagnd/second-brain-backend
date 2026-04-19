@@ -8,8 +8,7 @@ start:
 stop:
 	docker compose down
 
-restart:
-	stop start
+restart: stop start
 
 start-daemon:
 	docker compose up -d --build

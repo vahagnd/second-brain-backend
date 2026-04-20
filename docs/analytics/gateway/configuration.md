@@ -50,6 +50,16 @@ The gateway uses the **sync** URI (`sqlalchemy_uri_v2_sync`) via `psycopg2`.
 
 ---
 
+### `PaginationSettings` — prefix: `PAGINATION_`
+
+Defined in `apps/second-brain-gateway/settings.py`.
+
+| Env Variable | Python Field | Type | Default | Description |
+|---|---|---|---|---|
+| `PAGINATION_LIMIT` | `limit` | `int` | `10` | Default number of items per page returned by `GET /notes` |
+
+---
+
 ### `EmbeddingSettings` — prefix: `EMBEDDING_`
 
 Defined in `packages/second-brain-db/src/second_brain_db/settings.py`.
@@ -76,6 +86,9 @@ EMBEDDING_MODEL=all-MiniLM-L6-v2
 # ── Similarity Search ─────────────────────────────────────
 SIMILARITY_SEARCH_TOP_K=5       # used in both search and dedup
 SIMILARITY_SEARCH_THRESHOLD=0.95  # used ONLY in dedup (POST /notes)
+
+# ── Pagination ────────────────────────────────────────────
+PAGINATION_LIMIT=10             # default page size for GET /notes
 
 # ── Gateway ───────────────────────────────────────────────
 APP_API_PREFIX=/api/v1

@@ -114,14 +114,18 @@ Returns a list of notes. Behaviour depends on the query parameters provided.
 | `search` | `string` | `null` | Optional search query. If omitted, all notes are returned. |
 | `search_type` | `"semantic"` \| `"like"` | `"semantic"` | Search strategy. Only used when `search` is provided. |
 | `top_k` | `integer` (> 0) | `5` | Maximum results for semantic search. Ignored for `like` search and when no `search` is given. |
+| `sort_by` | `"id"` \| `"content"` \| `"created_at"` \| `"updated_at"` | `"id"` | Field to sort results by. Ignored for semantic search (results are always ordered by relevance score). |
+| `order_by` | `"asc"` \| `"desc"` | `"desc"` | Sort direction. Ignored for semantic search. |
+| `page` | `integer` (> 0) | `1` | 1-based page number. |
+| `limit` | `integer` (> 0) | `10` | Number of items per page. Configurable via `PAGINATION_LIMIT`. |
 
 ### Behaviour Matrix
 
 | `search` | `search_type` | Behaviour |
 |---|---|---|
-| not provided | — | Returns all notes ordered by `created_at` descending |
-| provided | `"semantic"` | Embeds the query, runs cosine similarity search, returns top `top_k` results with scores |
-| provided | `"like"` | Runs a case-insensitive SQL `ILIKE '%query%'` search, ordered by `created_at` descending |
+| not provided | — | Returns all notes sorted by `sort_by` / `order_by`, paginated |
+| provided | `"semantic"` | Embeds the query, runs cosine similarity search, returns top `top_k` results sorted by score descending, paginated |
+| provided | `"like"` | Runs a case-insensitive SQL `ILIKE '%query%'` search, sorted by `sort_by` / `order_by`, paginated |
 
 ### Responses
 
@@ -131,6 +135,9 @@ Returns a list of notes. Behaviour depends on the query parameters provided.
 {
   "total": 2,
   "search_type": null,
+  "page": 1,
+  "limit": 10,
+  "pages": 1,
   "items": [
     { "id": 42, "content": "FastAPI uses Pydantic for data validation." },
     { "id": 41, "content": "SQLAlchemy is a Python ORM." }
@@ -144,6 +151,9 @@ Returns a list of notes. Behaviour depends on the query parameters provided.
 {
   "total": 1,
   "search_type": "semantic",
+  "page": 1,
+  "limit": 10,
+  "pages": 1,
   "items": [
     { "id": 42, "content": "FastAPI uses Pydantic for data validation.", "score": 0.91 }
   ]
@@ -154,9 +164,12 @@ Returns a list of notes. Behaviour depends on the query parameters provided.
 
 | Field | Type | Description |
 |---|---|---|
-| `total` | `integer` | Number of items returned |
+| `total` | `integer` | Total number of matching items (before pagination) |
 | `search_type` | `"like"` \| `"semantic"` \| `null` | Indicates which search strategy was used |
-| `items` | `array<Note>` or `array<NoteWithScore>` | List of notes |
+| `page` | `integer` | Current page number (1-based) |
+| `limit` | `integer` | Number of items per page |
+| `pages` | `integer` | Total number of pages (`ceil(total / limit)`) |
+| `items` | `array<Note>` or `array<NoteWithScore>` | List of notes for the current page |
 | `items[].id` | `integer` | Note ID |
 | `items[].content` | `string` | Note content |
 | `items[].score` | `float` | Cosine similarity score — only present for semantic search |
@@ -237,4 +250,4 @@ Permanently deletes a note by its ID.
 | `NoteCreatedResponse` | `POST /notes` response | `id: int`, `content: str`, `created: bool` |
 | `Note` | `GET /notes`, `GET /notes/{id}` response | `id: int`, `content: str` |
 | `NoteWithScore` | `GET /notes` semantic search response | `id: int`, `content: str`, `score: float` |
-| `NoteListResponse` | `GET /notes` response wrapper | `total: int`, `search_type: str\|null`, `items: list` |
+| `NoteListResponse` | `GET /notes` response wrapper | `total: int`, `search_type: str\|null`, `page: int\|null`, `limit: int\|null`, `pages: int\|null`, `items: list` |

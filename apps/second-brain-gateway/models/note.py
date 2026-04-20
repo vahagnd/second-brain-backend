@@ -24,4 +24,7 @@ class NoteWithScore(Note):
 class NoteListResponse(BaseModel):
     total: int
     search_type: Literal["like", "semantic"] | None = None
+    page: int | None = None
+    limit: int | None = None
+    pages: int | None = None
     items: list[Note] | list[NoteWithScore]

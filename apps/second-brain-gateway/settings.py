@@ -18,5 +18,14 @@ class SimilaritySearchSettings(BaseSettings):
     threshold: float = 0.95
 
 
+class PaginationSettings(BaseSettings):
+    """Settings for pagination."""
+
+    model_config = SettingsConfigDict(env_prefix="PAGINATION_", case_sensitive=False)
+
+    limit: int = 10
+
+
 app_settings = AppSettings()
 similarity_search_settings = SimilaritySearchSettings()
+pagination_settings = PaginationSettings()

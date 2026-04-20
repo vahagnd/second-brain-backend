@@ -93,7 +93,10 @@ def list_notes(  # noqa: PLR0913
             page=page,
             limit=limit,
             pages=pages,
-            items=[Note(id=note.id, content=note.content) for note in page_notes],
+            items=[
+                Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
+                for note in page_notes
+            ],
         )
 
     # No search — return all notes
@@ -105,7 +108,10 @@ def list_notes(  # noqa: PLR0913
         page=page,
         limit=limit,
         pages=pages,
-        items=[Note(id=note.id, content=note.content) for note in page_notes],
+        items=[
+            Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
+            for note in page_notes
+        ],
     )
 
 
@@ -115,7 +121,7 @@ def get_note(note_id: int, notes_repo: NoteRepositoryDependency) -> Note | None:
     note = notes_repo.get_one_or_none(note_id)
     if not note:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Note not found")
-    return Note(id=note.id, content=note.content)
+    return Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
 
 
 @router.delete("/{note_id}", status_code=status.HTTP_204_NO_CONTENT)

@@ -1,3 +1,4 @@
+import datetime
 from typing import Literal
 
 from pydantic import BaseModel
@@ -15,6 +16,8 @@ class NoteCreatedResponse(NoteCreate):
 class Note(BaseModel):
     id: int
     content: str
+    created_at: datetime.datetime | None = None
+    updated_at: datetime.datetime | None = None
 
 
 class NoteWithScore(Note):

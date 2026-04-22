@@ -1,6 +1,6 @@
 """Auth service for handling user authentication and JWT token generation."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -25,7 +25,7 @@ class AuthService:
         expires_delta: timedelta,
     ) -> str:
         payload = data.copy()
-        payload["exp"] = datetime.now(tz=timezone.utc) + expires_delta
+        payload["exp"] = datetime.now(tz=UTC) + expires_delta
         return jwt.encode(payload, secret_key, algorithm=algorithm)
 
     @staticmethod

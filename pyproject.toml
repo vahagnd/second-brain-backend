@@ -93,6 +93,8 @@ convention = "numpy"
 "tests/*" = ["S", "D", "INP001", "PLR2004", "ARG002", "RUF003", "ERA001", "ANN", "RUF002"]
 "test_files/*" = ["D", "INP001"]
 "scripts/*" = ["ALL"]
+"apps/second-brain-gateway/routers/admin.py" = ["ARG001"]
+"apps/second-brain-gateway/routers/auth.py" = ["ARG001"]
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.

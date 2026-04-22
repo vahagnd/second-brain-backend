@@ -187,7 +187,7 @@ Router prefix: `/users`, tag: `users`
 
 - Requires `CurrentUserDependency`
 - Request body: `UserUpdate` (`username: str | None`)
-- If `username` provided: check it's not already taken via `user_repo.get_one_or_none_by_username(username)` → `400 Bad Request` if taken
+- If `username` provided: check it's not already taken via `user_repo.get_one_or_none_by_username(username)` → `409 Conflict` if taken
 - Call `user_repo.update(current_user.id, username=username)`
 - Return updated `UserDetail`
 
@@ -206,10 +206,10 @@ All admin endpoints must be protected with `AdminUserDependency`.
 
 ### Update `POST /admin/users`
 
-- Accept `username: str` and `password: str` in request body (use a `UserAdminCreate` Pydantic model: `username: str`, `password: str`, `role: str = "user"`)
+- Accept `username: str` and `password: str` in request body (use a `UserCreate` Pydantic model: `username: str`, `password: str`, `role: str = "user"`)
 - Hash password with `AuthService.hash_password(password)`
 - Call `user_repo.add(username, password_hash=hashed, role=role)`
-- Return `UserCreatedResponse`
+- Return `UserDetail`
 
 ### New `PATCH /admin/users/{user_id}`
 
@@ -227,7 +227,7 @@ All admin endpoints must be protected with `AdminUserDependency`.
 - Validate user exists → `404 Not Found` if not
 - Hash new password with `AuthService.hash_password(new_password)`
 - Call `user_repo.update_password(user_id, password_hash=hashed)`
-- Return `204 No Content`
+- Return `UserDetail`
 
 ---
 

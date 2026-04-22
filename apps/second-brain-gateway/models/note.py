@@ -25,3 +25,8 @@ class NoteListResponse(BaseModel):
     total: int
     search_type: Literal["like", "semantic"] | None = None
     items: list[Note] | list[NoteWithScore]
+
+
+class NoteListDuplicateResponse(BaseModel):
+    message: str
+    similar_notes: list[NoteWithScore]

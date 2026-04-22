@@ -10,49 +10,48 @@ class NoteRepository:
         """Initialize the NoteRepository with a SQLAlchemy session."""
         self.session = session
 
-    def add(self, content: str, embedding: list[float] | None = None) -> Note:
+    def add(self, user_id: int, content: str, embedding: list[float] | None = None) -> Note:
         """Add a new note with the given content and optional embedding."""
-        note = Note(content=content, embedding=embedding)
+        note = Note(user_id=user_id, content=content, embedding=embedding)
         self.session.add(note)
         self.session.commit()
         self.session.refresh(note)
         return note
 
-    def get_all(self) -> list[Note]:
+    def get_all(self, user_id: int) -> list[Note]:
         """Get all notes."""
-        stmt = select(Note).order_by(Note.created_at.desc())
+        stmt = select(Note).where(Note.user_id == user_id).order_by(Note.created_at.desc())
         result = self.session.execute(stmt)
         return result.scalars().all()
 
-    def search(self, query: str) -> list[Note]:
-        """Search for notes containing the query string in their content."""
-        stmt = select(Note).where(Note.content.ilike(f"%{query}%")).order_by(Note.created_at.desc()).limit(10)
-        result = self.session.execute(stmt)
-        return result.scalars().all()
-
-    def get_one_or_none(self, note_id: int) -> Note | None:
+    def get_one_or_none(self, user_id: int, note_id: int) -> Note | None:
         """Get a single note by its ID, or return None if it doesn't exist."""
-        stmt = select(Note).where(Note.id == note_id)
+        stmt = select(Note).where(Note.id == note_id, Note.user_id == user_id)
         result = self.session.execute(stmt)
         return result.scalars().first()
 
-    def delete(self, note_id: int) -> bool:
+    def delete(self, user_id: int, note_id: int) -> bool:
         """Delete a note by its ID. Returns True if the note was deleted, False if it didn't exist."""
-        note = self.get_one_or_none(note_id)
+        note = self.get_one_or_none(user_id, note_id)
         if not note:
             return False
         self.session.delete(note)
         self.session.commit()
         return True
 
-    def search_by_content(self, query: str) -> list[Note]:
+    def search_by_content(self, user_id: int, query: str) -> list[Note]:
         """Search for notes that have content containing the given query string."""
-        stmt = select(Note).where(Note.content.ilike(f"%{query}%")).order_by(Note.created_at.desc())
+        stmt = (
+            select(Note)
+            .where(Note.user_id == user_id, Note.content.ilike(f"%{query}%"))
+            .order_by(Note.created_at.desc())
+        )
         result = self.session.execute(stmt)
         return result.scalars().all()
 
     def search_by_embedding(
         self,
+        user_id: int,
         query_embedding: list[float],
         top_k: int = 5,
         threshold: float | None = None,
@@ -62,6 +61,8 @@ class NoteRepository:
 
         Parameters
         ----------
+        user_id : int
+            The ID of the user whose notes to search.
         query_embedding : list[float]
             The embedding vector of the search query.
         top_k : int, optional
@@ -74,7 +75,7 @@ class NoteRepository:
         list[(Note, float)]
             List of notes and their similarity scores ranked by cosine similarity (descending).
         """
-        all_notes = self.get_all()
+        all_notes = self.get_all(user_id=user_id)
 
         # Filter notes that have embeddings
         notes_with_embeddings = [note for note in all_notes if note.embedding is not None]

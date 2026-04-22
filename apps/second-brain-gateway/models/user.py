@@ -7,10 +7,6 @@ class UserCreate(BaseModel):
     role: str = "user"
 
 
-class UserCreatedResponse(UserCreate):
-    id: int
-
-
 class UserDetail(BaseModel):
     id: int
     username: str

@@ -9,9 +9,9 @@ class UserRepository:
         """Initialize the UserRepository with a SQLAlchemy session."""
         self.session = session
 
-    def add(self, username: str) -> User:
+    def add(self, username: str, password_hash: str, role: str = "user") -> User:
         """Add a new user with the given username."""
-        user = User(username=username)
+        user = User(username=username, password_hash=password_hash, role=role)
         self.session.add(user)
         self.session.commit()
         self.session.refresh(user)
@@ -43,3 +43,24 @@ class UserRepository:
         self.session.delete(user)
         self.session.commit()
         return True
+
+    def update(self, user_id: int, username: str | None = None) -> User | None:
+        """Update a user's username. Returns the updated user, or None if the user doesn't exist."""
+        user = self.get_one_or_none(user_id)
+        if not user:
+            return None
+        if username is not None:
+            user.username = username
+        self.session.commit()
+        self.session.refresh(user)
+        return user
+
+    def update_password(self, user_id: int, password_hash: str) -> User | None:
+        """Update a user's password hash. Returns the updated user, or None if the user doesn't exist."""
+        user = self.get_one_or_none(user_id)
+        if not user:
+            return None
+        user.password_hash = password_hash
+        self.session.commit()
+        self.session.refresh(user)
+        return user

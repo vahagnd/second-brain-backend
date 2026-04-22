@@ -44,3 +44,5 @@ class User(Base):
         server_default=func.now(),
         onupdate=func.now(),
     )
+    password_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    role: Mapped[str] = mapped_column(Text, nullable=False, server_default="user")

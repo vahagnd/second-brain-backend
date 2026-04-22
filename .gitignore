@@ -13,3 +13,6 @@ wheels/
 
 notes_files/
 *cache*
+
+# MacOS files
+.DS_Store

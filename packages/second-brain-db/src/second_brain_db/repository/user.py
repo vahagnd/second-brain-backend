@@ -5,7 +5,7 @@ from second_brain_db.db.models import User
 
 
 class UserRepository:
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         """Initialize the UserRepository with a SQLAlchemy session."""
         self.session = session
 

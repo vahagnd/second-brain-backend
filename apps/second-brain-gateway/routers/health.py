@@ -4,6 +4,6 @@ router = APIRouter(prefix="/health", tags=["health"])
 
 
 @router.get("")
-def health_check():
+def health_check():  # noqa: ANN201
     """Health check endpoint."""
     return {"status": "ok"}

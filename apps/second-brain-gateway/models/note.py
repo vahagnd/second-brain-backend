@@ -8,11 +8,6 @@ class NoteCreate(BaseModel):
     content: str
 
 
-class NoteCreatedResponse(NoteCreate):
-    id: int
-    created: bool = True
-
-
 class Note(BaseModel):
     id: int
     content: str
@@ -31,3 +26,8 @@ class NoteListResponse(BaseModel):
     limit: int | None = None
     pages: int | None = None
     items: list[Note] | list[NoteWithScore]
+
+
+class NoteListDuplicateResponse(BaseModel):
+    message: str
+    similar_notes: list[NoteWithScore]

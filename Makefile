@@ -36,3 +36,12 @@ lint:
 
 ruff-fix-all:
 	uv run ruff check --fix
+
+# ===================================================================
+# Migrations
+# ===================================================================
+alembic-upgrade-head:
+	uv run --env-file .env.local alembic upgrade head
+
+alembic-get-current:
+	uv run --env-file .env.local alembic current

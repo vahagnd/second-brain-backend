@@ -58,26 +58,7 @@ target-version = "py312"
 [tool.ruff.lint]
 # https://docs.astral.sh/ruff/rules/#pyflakes-f
 select = ["ALL"]
-ignore = [
-    "ANN",
-    "B027",
-    "G004",
-    "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107", "D401", "D417", "D212", "D212", "D205", # Docstrings
-    "RET504",
-    "INP001",
-    "TRY401", "TRY003",
-    "RUF012",
-    "PTH100", "PTH118", "PTH120", "PTH123", "PTH109", "PTH113", "PTH208", "PTH119", "PTH202", "PTH110",
-    "FIX002", "TD002", "TD003", "TD004",
-    "S104",
-    "FBT001", "FBT002", # Boolean arguments
-    "DTZ003", "DTZ005", # Timezone aware datetime objects
-    "RUF001", "RUF003", # Cyrillic symbols
-    "TC001", "TC002", # false positive TYPE_CHECKING error in FastAPI routers
-    "EM101", "EM102",
-    "TRY003", "TRY301", "TRY300",
-    "COM812",
-]
+ignore = ["D"]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
@@ -90,9 +71,10 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S", "D", "INP001", "PLR2004", "ARG002", "RUF003", "ERA001", "ANN", "RUF002"]
-"test_files/*" = ["D", "INP001"]
 "scripts/*" = ["ALL"]
+"apps/second-brain-gateway/routers/admin.py" = ["ARG001"]
+"apps/second-brain-gateway/routers/auth.py" = ["ARG001"]
+"apps/*" = ["INP001"]
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.

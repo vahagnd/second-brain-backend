@@ -18,6 +18,14 @@ class SimilaritySearchSettings(BaseSettings):
     threshold: float = 0.95
 
 
+class JWTSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="JWT_", case_sensitive=False)
+
+    secret_key: str
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 60
+
+
 class PaginationSettings(BaseSettings):
     """Settings for pagination."""
 
@@ -28,4 +36,5 @@ class PaginationSettings(BaseSettings):
 
 app_settings = AppSettings()
 similarity_search_settings = SimilaritySearchSettings()
+jwt_settings = JWTSettings()
 pagination_settings = PaginationSettings()

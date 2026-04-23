@@ -1,7 +1,9 @@
 .env
+.env.local
 notes_files
 .editorconfig
 .pre-commit-config.yaml
+.ruff_cache
 
 PLANS.md
 GLOBAL_PLANS.md

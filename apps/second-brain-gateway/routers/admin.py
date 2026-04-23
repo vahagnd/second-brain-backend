@@ -68,13 +68,13 @@ def update_user(
     user = user_repo.get_one_or_none(user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    if update_body.username is not None:
-        taken = user_repo.get_one_or_none_by_username(update_body.username)
+    if update_body.new_username is not None:
+        taken = user_repo.get_one_or_none_by_username(update_body.new_username)
         if taken is not None:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already taken")
 
-    updated = user_repo.update(user_id=user_id, username=update_body.username)
-    return UserDetail.model_validate(updated)
+    updated = user_repo.update(user_id=user_id, username=update_body.new_username)
+    return UserDetail(id=updated.id, username=updated.username, role=updated.role)
 
 
 @router.patch("/users/{user_id}/password", status_code=status.HTTP_200_OK)
@@ -90,5 +90,5 @@ def update_user_password(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     password_hash = AuthService.hash_password(update_body.new_password)
-    updated = user_repo.update(user_id=user_id, password_hash=password_hash, role=user.role)
-    return UserDetail.model_validate(updated)
+    updated = user_repo.update_password(user_id=user_id, password_hash=password_hash)
+    return UserDetail(id=updated.id, username=updated.username, role=updated.role)

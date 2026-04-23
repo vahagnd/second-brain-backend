@@ -19,7 +19,7 @@ class UserListResponse(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    username: str | None = None
+    new_username: str | None = None
 
 
 class UserUpdatePassword(BaseModel):

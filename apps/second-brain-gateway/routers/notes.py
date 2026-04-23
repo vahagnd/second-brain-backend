@@ -7,7 +7,6 @@ from fastapi import APIRouter, HTTPException, Query, status
 from models.note import (
     Note,
     NoteCreate,
-    NoteCreatedResponse,
     NoteListDuplicateResponse,
     NoteListResponse,
     NoteWithScore,
@@ -23,7 +22,7 @@ def create_note(
     notes_repo: NoteRepositoryDependency,
     embedding_service: EmbeddingServiceDependency,
     note_create: NoteCreate,
-) -> NoteCreatedResponse:
+) -> Note:
     """Create a new note in db."""
     # Generate embedding from note content
     embedding = embedding_service.embed(note_create.content)
@@ -49,9 +48,9 @@ def create_note(
         )
 
     # Add note with embedding
-    note = notes_repo.add(note_create.content, embedding=embedding)
+    note = notes_repo.add(user_id=current_user.id, content=note_create.content, embedding=embedding)
 
-    return NoteCreatedResponse(id=note.id, content=note_create.content, created=True)
+    return Note(id=note.id, content=note.content)
 
 
 @router.get("", status_code=status.HTTP_200_OK)
@@ -84,13 +83,13 @@ def list_notes(  # noqa: PLR0913
                 items=[(NoteWithScore(id=note.id, content=note.content, score=score)) for note, score in similarities],
             )
         # Use LIKE search
-        note_orm = notes_repo.search_by_content(user_id=user_id, query=search)
+        note_search = notes_repo.search_by_content(user_id=user_id, query=search)
     else:
         # Return all notes
-        note_orm = notes_repo.get_all(user_id=user_id)
-    total = len(note_orm)
+        note_search = notes_repo.get_all(user_id=user_id)
+    total = len(note_search)
 
-    note_list = [Note(id=note.id, content=note.content) for note in note_orm]
+    note_list = [Note(id=note.id, content=note.content) for note in note_search]
     return NoteListResponse(total=total, items=note_list)
 
 

@@ -2,23 +2,24 @@ from typing import Annotated
 
 from fastapi import HTTPException, status
 from fastapi.params import Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from second_brain_db.db.models import User
-from second_brain_db.repository.user import UserRepository
 from second_brain_db.services import AuthService
 from settings import jwt_settings
 
-from dependencies.db import DBSessionDependency
+from dependencies.repositories import UserRepositoryDependency
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+http_bearer = HTTPBearer()
 
-TokenDependency = Annotated[str, Depends(oauth2_scheme)]
+CredentialsDependency = Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)]
 
 
 async def get_current_user(
-    token: TokenDependency,
-    session: DBSessionDependency,
+    credentials: CredentialsDependency,
+    user_repo: UserRepositoryDependency,
 ) -> User:
+    token = credentials.credentials
+
     unauthorized = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -38,7 +39,7 @@ async def get_current_user(
     except (KeyError, ValueError) as err:
         raise unauthorized from err
 
-    user = await UserRepository(session).get_one_or_none(user_id)
+    user = user_repo.get_one_or_none(user_id)
     if user is None:
         raise unauthorized
 

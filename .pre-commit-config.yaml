@@ -64,11 +64,3 @@ repos:
         require_serial: true
         language: python
         types_or: [python, pyi, jupyter]
-
-
-      - id: git-commit-prefix
-        name: git-commit-prefix
-        entry: uv run python .additional/bitbucket_commit_prefix.py
-        language: python
-        stages: [prepare-commit-msg]
-        description: Searches the branch name for something looking like an issue name template and prepends the commit message with it

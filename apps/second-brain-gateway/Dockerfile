@@ -31,6 +31,7 @@ COPY alembic.ini ./
 COPY apps/second-brain-gateway/*.py ./
 COPY apps/second-brain-gateway/routers ./routers
 COPY apps/second-brain-gateway/models ./models
+COPY apps/second-brain-gateway/utils ./utils
 COPY apps/second-brain-gateway/dependencies ./dependencies
 
 EXPOSE 8000

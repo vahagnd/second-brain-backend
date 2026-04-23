@@ -1,3 +1,4 @@
+import math
 from typing import Annotated, Literal
 
 from dependencies.auth import CurrentUserDependency
@@ -11,7 +12,8 @@ from models.note import (
     NoteListResponse,
     NoteWithScore,
 )
-from settings import similarity_search_settings
+from settings import pagination_settings, similarity_search_settings
+from utils.pagination import sort_and_paginate
 
 router = APIRouter(prefix="/notes", tags=["notes"])
 
@@ -50,7 +52,7 @@ def create_note(
     # Add note with embedding
     note = notes_repo.add(user_id=current_user.id, content=note_create.content, embedding=embedding)
 
-    return Note(id=note.id, content=note.content)
+    return Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
 
 
 @router.get("", status_code=status.HTTP_200_OK)
@@ -61,36 +63,77 @@ def list_notes(  # noqa: PLR0913
     search: str | None = None,
     search_type: Literal["like", "semantic"] = "semantic",
     top_k: Annotated[int, Query(gt=0, description="Only used with semantic search.")] = 5,
+    sort_by: Literal["id", "content", "created_at", "updated_at"] = "id",
+    order_by: Literal["asc", "desc"] = "desc",
+    page: Annotated[int, Query(gt=0, description="Page number (1-based).")] = 1,
+    limit: Annotated[int, Query(gt=0, description="Number of items per page.")] = pagination_settings.limit,
 ) -> NoteListResponse:
-    """List all notes ordered by newest first.
+    """List notes with sorting and pagination.
 
-    If search query is provided, uses semantic search via embeddings.
-    Otherwise, returns all notes ordered by creation date.
+    If a search query is provided, uses semantic or LIKE search.
+    Sorting and pagination are applied to all result sets.
     """
     user_id = current_user.id
     if search:
         if search_type == "semantic":
-            # Convert search query to embedding and use semantic search
             search_embedding = embedding_service.embed(search)
             similarities = notes_repo.search_by_embedding(
                 user_id=user_id,
                 query_embedding=search_embedding,
                 top_k=top_k,
             )
+            # Extract notes, sort, paginate, then re-attach scores
+            notes = [note for note, _ in similarities]
+            scores = {note.id: score for note, score in similarities}
+            page_notes, total = sort_and_paginate(notes, "search", order_by, page, limit)
+            pages = math.ceil(total / limit) if limit else 1
             return NoteListResponse(
-                total=len(similarities),
+                total=total,
                 search_type="semantic",
-                items=[(NoteWithScore(id=note.id, content=note.content, score=score)) for note, score in similarities],
+                page=page,
+                limit=limit,
+                pages=pages,
+                items=[
+                    NoteWithScore(
+                        id=note.id,
+                        content=note.content,
+                        score=scores[note.id],
+                        created_at=note.created_at,
+                        updated_at=note.updated_at,
+                    )
+                    for note in page_notes
+                ],
             )
-        # Use LIKE search
-        note_search = notes_repo.search_by_content(user_id=user_id, query=search)
-    else:
-        # Return all notes
-        note_search = notes_repo.get_all(user_id=user_id)
-    total = len(note_search)
+        # LIKE search
+        all_notes = notes_repo.search_by_content(user_id=user_id, query=search)
+        page_notes, total = sort_and_paginate(all_notes, sort_by, order_by, page, limit)
+        pages = math.ceil(total / limit) if limit else 1
+        return NoteListResponse(
+            total=total,
+            search_type="like",
+            page=page,
+            limit=limit,
+            pages=pages,
+            items=[
+                Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
+                for note in page_notes
+            ],
+        )
 
-    note_list = [Note(id=note.id, content=note.content) for note in note_search]
-    return NoteListResponse(total=total, items=note_list)
+    # No search — return all notes
+    all_notes = notes_repo.get_all(user_id=user_id)
+    page_notes, total = sort_and_paginate(all_notes, sort_by, order_by, page, limit)
+    pages = math.ceil(total / limit) if limit else 1
+    return NoteListResponse(
+        total=total,
+        page=page,
+        limit=limit,
+        pages=pages,
+        items=[
+            Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
+            for note in page_notes
+        ],
+    )
 
 
 @router.get("/{note_id}", status_code=status.HTTP_200_OK)
@@ -104,7 +147,7 @@ def get_note(
     note = notes_repo.get_one_or_none(user_id=user_id, note_id=note_id)
     if not note:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Note not found")
-    return Note(id=note.id, content=note.content, created_at=note.created_at.isoformat())
+    return Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
 
 
 @router.delete("/{note_id}", status_code=status.HTTP_204_NO_CONTENT)

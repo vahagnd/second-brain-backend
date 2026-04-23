@@ -26,6 +26,15 @@ class JWTSettings(BaseSettings):
     access_token_expire_minutes: int = 60
 
 
+class PaginationSettings(BaseSettings):
+    """Settings for pagination."""
+
+    model_config = SettingsConfigDict(env_prefix="PAGINATION_", case_sensitive=False)
+
+    limit: int = 10
+
+
 app_settings = AppSettings()
 similarity_search_settings = SimilaritySearchSettings()
 jwt_settings = JWTSettings()
+pagination_settings = PaginationSettings()

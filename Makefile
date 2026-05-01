@@ -3,7 +3,8 @@
 # ===================================================================
 
 start:
-	docker compose up --build
+	APP_VERSION=$(shell git describe --tags --always) \
+	docker compose up --build --remove-orphans
 
 stop:
 	docker compose down
@@ -11,7 +12,8 @@ stop:
 restart: stop start
 
 start-daemon:
-	docker compose up -d --build
+	APP_VERSION=$(shell git describe --tags --always) \
+	docker compose up --build --remove-orphans -d
 
 # ===================================================================
 # Development

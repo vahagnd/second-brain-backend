@@ -4,7 +4,7 @@ from functools import lru_cache
 
 from sentence_transformers import SentenceTransformer
 
-from second_brain_db.settings import embedding_settings
+from second_brain_service.settings import embedding_settings
 
 
 @lru_cache(maxsize=1)

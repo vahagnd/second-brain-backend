@@ -3,7 +3,7 @@
 from typing import Annotated
 
 from fastapi.params import Depends
-from second_brain_db.services.embedding import EmbeddingService
+from second_brain_service.services.embedding import EmbeddingService
 
 
 def get_embedding_service() -> EmbeddingService:

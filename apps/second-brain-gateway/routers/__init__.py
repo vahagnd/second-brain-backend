@@ -7,6 +7,7 @@ from routers import (
     auth,
     health,
     notes,
+    system,
     users,
 )
 
@@ -20,3 +21,4 @@ def init_routers(app: FastAPI):  # noqa: ANN201
 
     # Service
     app.include_router(health.router)
+    app.include_router(system.router)

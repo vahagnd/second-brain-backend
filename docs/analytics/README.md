@@ -26,7 +26,6 @@ analytics/
 |---|---|
 | [gateway/overview.md](gateway/overview.md) | High-level architecture, layers, tech stack |
 | [gateway/api-endpoints.md](gateway/api-endpoints.md) | All REST endpoints, schemas, status codes |
-| [gateway/data-flow.md](gateway/data-flow.md) | Step-by-step request lifecycle for each operation |
 | [gateway/configuration.md](gateway/configuration.md) | All environment variables with defaults and types |
 | [gateway/database.md](gateway/database.md) | Notes table schema and Alembic migration history |
 | [packages/second-brain-db/overview.md](packages/second-brain-db/overview.md) | `second-brain-db` package role and dependencies |

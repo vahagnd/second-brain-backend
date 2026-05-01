@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from fastapi.params import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from second_brain_db.db.models import User
-from second_brain_db.services import AuthService
+from second_brain_service.services import AuthService
 from settings import jwt_settings
 
 from dependencies.repositories import UserRepositoryDependency

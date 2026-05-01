@@ -1,7 +1,7 @@
 [project]
 name = "second-brain-backend"
-version = "0.1.0"
-description = "Add your description here"
+dynamic=["version"]
+description = "Second Brain Backend package"
 readme = "README.md"
 requires-python = ">=3.13"
 
@@ -17,6 +17,33 @@ dev = [
     "pre-commit",
     "ipykernel",
 ]
+
+[tool.uv]
+package = false
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true } }]
+
+[tool.uv.sources]
+second-brain-db = { workspace = true }
+second-brain-service = { workspace = true }
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+strict = true
+fallback-version = "0.0.0"
+format-jinja = """
+{%- if distance == 0 -%}
+  {{ base }}
+{%- else -%}
+  {{ base }}-{{ distance }}-g{{ commit[:7] }}
+{%- endif -%}
+"""
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.

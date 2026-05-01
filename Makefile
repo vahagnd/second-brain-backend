@@ -36,8 +36,11 @@ project-init-run:
 lint:
 	uv run pre-commit run --all-files
 
-ruff-fix-all:
+ruff-fix:
 	uv run ruff check --fix
+
+ruff-check:
+	uv run ruff check .
 
 # ===================================================================
 # Migrations

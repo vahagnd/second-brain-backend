@@ -1,9 +1,9 @@
 import math
 from typing import Annotated, Literal
 
-from dependencies.auth import CurrentUserDependency
 from dependencies.embedding import EmbeddingServiceDependency
 from dependencies.repositories import NoteRepositoryDependency
+from dependencies.user import CurrentUserDependency
 from fastapi import APIRouter, HTTPException, Query, status
 from models.note import (
     Note,

@@ -3,56 +3,60 @@ from typing import Annotated
 from fastapi import HTTPException, status
 from fastapi.params import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from second_brain_db.db.models import User
+from second_brain_db.repository.refresh_token import RefreshTokenRepository
+from second_brain_db.repository.revoked_access_token import RevokedAccessTokenRepository
 from second_brain_service.services import AuthService
 from settings import jwt_settings
 
-from dependencies.repositories import UserRepositoryDependency
+from dependencies.db import DBSessionDependency
 
 http_bearer = HTTPBearer()
 
-CredentialsDependency = Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)]
+CredentialsDependency = Annotated[
+    HTTPAuthorizationCredentials,
+    Depends(http_bearer),
+]
 
 
-async def get_current_user(
+def get_refresh_token_repository(session: DBSessionDependency) -> RefreshTokenRepository:
+    return RefreshTokenRepository(session)
+
+
+RefreshTokenRepositoryDependency = Annotated[
+    RefreshTokenRepository,
+    Depends(get_refresh_token_repository),
+]
+
+
+def get_revoked_access_token_repository(session: DBSessionDependency) -> RevokedAccessTokenRepository:
+    return RevokedAccessTokenRepository(session)
+
+
+RevokedAccessTokenRepositoryDependency = Annotated[
+    RevokedAccessTokenRepository,
+    Depends(get_revoked_access_token_repository),
+]
+
+
+async def get_current_user_payload(
     credentials: CredentialsDependency,
-    user_repo: UserRepositoryDependency,
-) -> User:
-    token = credentials.credentials
-
+) -> dict:
     unauthorized = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="Unauthenticated",
         headers={"WWW-Authenticate": "Bearer"},
     )
-
     payload = AuthService.decode_access_token(
-        token,
+        credentials.credentials,
         secret_key=jwt_settings.secret_key,
         algorithm=jwt_settings.algorithm,
     )
     if payload is None:
         raise unauthorized
-
-    try:
-        user_id = int(payload["sub"])
-    except (KeyError, ValueError) as err:
-        raise unauthorized from err
-
-    user = user_repo.get_one_or_none(user_id)
-    if user is None:
-        raise unauthorized
-
-    return user
+    return payload
 
 
-async def get_current_admin_user(
-    current_user: "CurrentUserDependency",
-) -> User:
-    if current_user.role != "admin":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admins only")
-    return current_user
-
-
-CurrentUserDependency = Annotated[User, Depends(get_current_user)]
-AdminUserDependency = Annotated[User, Depends(get_current_admin_user)]
+CurrentUserPayloadDependency = Annotated[
+    dict,
+    Depends(get_current_user_payload),
+]

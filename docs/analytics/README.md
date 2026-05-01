@@ -10,14 +10,8 @@ analytics/
 ├── gateway/
 │   ├── overview.md                    ← architecture & component map
 │   ├── api-endpoints.md               ← full API reference
-│   ├── data-flow.md                   ← request lifecycle diagrams
 │   ├── configuration.md               ← environment variables & settings
 │   └── database.md                    ← DB schema & migration history
-└── packages/
-    └── second-brain-db/
-        ├── overview.md                ← package purpose & dependencies
-        ├── embedding-service.md       ← embedding model & service
-        └── note-repository.md         ← repository methods & search strategies
 ```
 
 ## Quick Links
@@ -28,6 +22,3 @@ analytics/
 | [gateway/api-endpoints.md](gateway/api-endpoints.md) | All REST endpoints, schemas, status codes |
 | [gateway/configuration.md](gateway/configuration.md) | All environment variables with defaults and types |
 | [gateway/database.md](gateway/database.md) | Notes table schema and Alembic migration history |
-| [packages/second-brain-db/overview.md](packages/second-brain-db/overview.md) | `second-brain-db` package role and dependencies |
-| [packages/second-brain-db/embedding-service.md](packages/second-brain-db/embedding-service.md) | Embedding model, caching, and service API |
-| [packages/second-brain-db/note-repository.md](packages/second-brain-db/note-repository.md) | Repository pattern, all methods, search algorithms |

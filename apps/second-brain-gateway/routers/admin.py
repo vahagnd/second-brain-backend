@@ -1,5 +1,5 @@
-from dependencies.auth import AdminUserDependency
 from dependencies.repositories import UserRepositoryDependency
+from dependencies.user import AdminUserDependency
 from fastapi import APIRouter, HTTPException, status
 from models.user import UserCreate, UserDetail, UserListResponse, UserUpdate, UserUpdatePassword
 from second_brain_service.services.auth import AuthService

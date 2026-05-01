@@ -1,8 +1,8 @@
+from second_brain_service.utils.vector import cosine_similarity
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from second_brain_db.db.models import Note
-from second_brain_db.utils.vector import cosine_similarity
 
 
 class NoteRepository:

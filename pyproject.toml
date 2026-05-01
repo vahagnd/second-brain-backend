@@ -24,6 +24,7 @@ cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true 
 
 [tool.uv.sources]
 second-brain-db = { workspace = true }
+second-brain-service = { workspace = true }
 
 [build-system]
 requires = ["hatchling", "uv-dynamic-versioning"]

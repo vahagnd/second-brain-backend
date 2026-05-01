@@ -18,7 +18,7 @@ services:
       - second_brain_network
 
   migrations:
-    image: second-brain-gateway:latest
+    image: second-brain-gateway:${APP_VERSION:-v0.0.0}
     command: alembic upgrade head
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST}
@@ -37,7 +37,7 @@ services:
     build:
       context: .
       dockerfile: apps/second-brain-gateway/Dockerfile
-    image: second-brain-gateway:latest
+    image: second-brain-gateway:${APP_VERSION:-v0.0.0}
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}

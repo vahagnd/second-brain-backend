@@ -28,13 +28,4 @@ class DatabaseSettings(BaseSettings):
         return f"postgresql+psycopg2://{self.user}:{self.password.get_secret_value()}@{self.host}:{self.port}/{self.db}"
 
 
-class EmbeddingSettings(BaseSettings):
-    """Settings for embedding service."""
-
-    model_config = SettingsConfigDict(env_prefix="EMBEDDING_", case_sensitive=False)
-
-    model: str = "all-MiniLM-L6-v2"
-
-
 db_settings = DatabaseSettings()
-embedding_settings = EmbeddingSettings()

@@ -4,7 +4,7 @@ from dependencies.auth import CurrentUserDependency
 from dependencies.repositories import UserRepositoryDependency
 from fastapi import APIRouter, HTTPException, status
 from models.auth import LoginRequest, TokenResponse
-from second_brain_db.services.auth import AuthService
+from second_brain_service.services.auth import AuthService
 from settings import jwt_settings
 
 router = APIRouter(prefix="/auth", tags=["auth"])

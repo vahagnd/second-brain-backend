@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "second-brain-db",
+    "second-brain-service",
     "fastapi>=0.135.3",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.1",
@@ -17,3 +18,4 @@ dependencies = [
 
 [tool.uv.sources]
 second-brain-db = { workspace = true }
+second-brain-service = { workspace = true}

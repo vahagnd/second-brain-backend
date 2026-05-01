@@ -1,7 +1,7 @@
 [project]
 name = "second-brain-gateway"
 version = "0.1.0"
-description = "API Gateway for Second Brain"
+description = "API Gateway for Second Brain backend"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

@@ -1,8 +1,8 @@
 [project]
 name = "second-brain-db"
-version = "0.1.0"
-readme = "README.md"
+dynamic = ["version"]
 requires-python = ">=3.13"
+
 dependencies = [
     "alembic>=1.18.4",
     "numpy>=1.24.0",
@@ -22,3 +22,24 @@ torch = [
 name = "pytorch-cpu"
 url = "https://download.pytorch.org/whl/cpu"
 explicit = true
+
+# Build system
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+# Dynamic version config
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+strict = true
+fallback-version = "0.0.0"
+format-jinja = """
+{%- if distance == 0 -%}
+  {{ base }}
+{%- else -%}
+  {{ base }}-{{ distance }}-g{{ commit[:7] }}
+{%- endif -%}
+"""

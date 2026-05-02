@@ -30,7 +30,7 @@ class Note(Base):
         server_default=func.now(),
         onupdate=func.now(),
     )
-    user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
+    user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
 
 
 class User(Base):

@@ -1,8 +1,4 @@
-Generate plan in file PLAN.md, about setting up proper user logout.
+Generate API analytics at path @docs/analytics/gateway
 
-
-Use refresh tokens, token expiration, token invalidation.
-Dont use things like redis, if needed create a table in db for expired tokens and other stuff.
-
-
-DO NOT generate any code, just generate plan in PLAN.md.
+Analytics should ONLY include API endpoints, nothing else.
+No packages, no microservice architecture structure. ONLY gateway analytics.

@@ -1,3 +1,4 @@
+import logging
 import math
 from typing import Annotated, Literal
 
@@ -14,6 +15,8 @@ from models.note import (
 )
 from settings import pagination_settings, similarity_search_settings
 from utils.pagination import sort_and_paginate
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/notes",
@@ -50,6 +53,7 @@ def create_note(
     )
 
     if duplicates:
+        logger.warning("Create note failed: duplicates found: user_id=%s count=%s", user_id, len(duplicates))
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=NoteListDuplicateResponse(
@@ -70,6 +74,7 @@ def create_note(
 
     # Add note with embedding
     note = notes_repo.add(user_id=current_user.id, content=note_create.content, embedding=embedding)
+    logger.info("Note created: id=%s user_id=%s", note.id, note.user_id)
 
     return Note(
         id=note.id,
@@ -118,6 +123,7 @@ def list_notes(  # noqa: PLR0913
             scores = {note.id: score for note, score in similarities}
             page_notes, total = sort_and_paginate(notes, "search", order_by, page, limit)
             pages = math.ceil(total / limit) if limit else 1
+            logger.info("Semantic search: user_id=%s query=%r total=%s", current_user.id, search, total)
             return NoteListResponse(
                 total=total,
                 search_type="semantic",
@@ -140,6 +146,7 @@ def list_notes(  # noqa: PLR0913
         all_notes = notes_repo.search_by_content(user_id=user_id, query=search)
         page_notes, total = sort_and_paginate(all_notes, sort_by, order_by, page, limit)
         pages = math.ceil(total / limit) if limit else 1
+        logger.info("LIKE search: user_id=%s query=%r total=%s", current_user.id, search, total)
         return NoteListResponse(
             total=total,
             search_type="like",
@@ -162,6 +169,7 @@ def list_notes(  # noqa: PLR0913
     all_notes = notes_repo.get_all(user_id=user_id)
     page_notes, total = sort_and_paginate(all_notes, sort_by, order_by, page, limit)
     pages = math.ceil(total / limit) if limit else 1
+    logger.info("List notes: user_id=%s total=%s", current_user.id, total)
     return NoteListResponse(
         total=total,
         page=page,
@@ -195,7 +203,9 @@ def get_note(
     user_id = None if current_user.role == "admin" else current_user.id
     note = notes_repo.get_one_or_none(user_id=user_id, note_id=note_id)
     if not note:
+        logger.warning("Get note failed: not found: note_id=%s user_id=%s", note_id, current_user.id)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Note not found")
+    logger.info("Got note: id=%s user_id=%s", note_id, current_user.id)
     return Note(
         id=note.id,
         content=note.content,
@@ -220,4 +230,6 @@ def delete_note(
     user_id = None if current_user.role == "admin" else current_user.id
     deleted = notes_repo.delete(user_id=user_id, note_id=note_id)
     if not deleted:
+        logger.warning("Delete note failed: not found: note_id=%s user_id=%s", note_id, current_user.id)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Note not found")
+    logger.info("Note deleted: id=%s user_id=%s", note_id, current_user.id)

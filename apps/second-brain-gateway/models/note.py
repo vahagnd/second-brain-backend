@@ -11,8 +11,8 @@ class NoteCreate(BaseModel):
 class Note(BaseModel):
     id: int
     content: str
-    created_at: datetime.datetime | None = None
-    updated_at: datetime.datetime | None = None
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
     user_id: int
 
 

@@ -44,9 +44,17 @@ def create_note(
             detail=NoteListDuplicateResponse(
                 message="One or more similar notes already exist.",
                 similar_notes=[
-                    NoteWithScore(id=note.id, content=note.content, score=score) for note, score in duplicates
+                    NoteWithScore(
+                        id=note.id,
+                        content=note.content,
+                        created_at=note.created_at,
+                        updated_at=note.updated_at,
+                        score=score,
+                        user_id=note.user_id,
+                    )
+                    for note, score in duplicates
                 ],
-            ).model_dump(),
+            ).model_dump(mode="json"),
         )
 
     # Add note with embedding

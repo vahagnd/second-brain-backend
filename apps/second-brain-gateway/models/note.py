@@ -1,11 +1,13 @@
 import datetime
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class NoteCreate(BaseModel):
     content: str
+
+    model_config = ConfigDict(extra="forbid")
 
 
 class Note(BaseModel):

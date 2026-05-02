@@ -1,9 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class LoginRequest(BaseModel):
     username: str
     password: str
+
+    model_config = ConfigDict(extra="forbid")
 
 
 class TokenResponse(BaseModel):
@@ -14,3 +16,5 @@ class TokenResponse(BaseModel):
 
 class RefreshRequest(BaseModel):
     refresh_token: str
+
+    model_config = ConfigDict(extra="forbid")

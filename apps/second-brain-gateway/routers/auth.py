@@ -1,3 +1,4 @@
+import logging
 from datetime import UTC, datetime, timedelta
 
 from dependencies.auth import (
@@ -11,6 +12,8 @@ from fastapi import APIRouter, HTTPException, status
 from models.auth import LoginRequest, RefreshRequest, TokenResponse
 from second_brain_service.services.auth import AuthService
 from settings import jwt_settings
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -32,8 +35,10 @@ def login(
     )
     user = user_repo.get_one_or_none_by_username(login_body.username)
     if not user:
+        logger.warning("Login failed: unknown username=%s", login_body.username)
         raise invalid
     if not AuthService.verify_password(login_body.password, user.password_hash):
+        logger.warning("Login failed: wrong password for user_id=%s", user.id)
         raise invalid
 
     access_token = AuthService.create_access_token(
@@ -50,6 +55,7 @@ def login(
         expires_at=datetime.now(tz=UTC) + timedelta(days=jwt_settings.refresh_token_expire_days),
     )
 
+    logger.info("Login successful: user_id=%s", user.id)
     return TokenResponse(access_token=access_token, refresh_token=refresh_token, token_type="bearer")  # noqa: S106
 
 
@@ -71,14 +77,18 @@ def refresh(
 
     token = refresh_token_repo.get_by_token(body.refresh_token)
     if token is None:
+        logger.warning("Refresh failed: token not found")
         raise unauthorized
     if token.revoked:
+        logger.warning("Refresh failed: token already revoked: user_id=%s", token.user_id)
         raise unauthorized
     if token.expires_at < datetime.now(tz=UTC):
+        logger.warning("Refresh failed: token expired: user_id=%s", token.user_id)
         raise unauthorized
 
     user = user_repo.get_one_or_none(token.user_id)
     if user is None:
+        logger.warning("Refresh failed: user not found: user_id=%s", token.user_id)
         raise unauthorized
 
     refresh_token_repo.revoke(body.refresh_token)
@@ -97,6 +107,7 @@ def refresh(
         expires_delta=timedelta(minutes=jwt_settings.access_token_expire_minutes),
     )
 
+    logger.info("Token refreshed: user_id=%s", user.id)
     return TokenResponse(access_token=new_access_token, refresh_token=new_refresh_token, token_type="bearer")  # noqa: S106
 
 
@@ -114,4 +125,5 @@ def logout(
         user_id=current_user.id,
         expires_at=datetime.fromtimestamp(payload["exp"], tz=UTC),
     )
+    logger.info("Logout: user_id=%s", current_user.id)
     return {"message": "Logged out successfully"}

@@ -52,7 +52,13 @@ def create_note(
     # Add note with embedding
     note = notes_repo.add(user_id=current_user.id, content=note_create.content, embedding=embedding)
 
-    return Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
+    return Note(
+        id=note.id,
+        content=note.content,
+        created_at=note.created_at,
+        updated_at=note.updated_at,
+        user_id=note.user_id,
+    )
 
 
 @router.get("", status_code=status.HTTP_200_OK)
@@ -62,7 +68,10 @@ def list_notes(  # noqa: PLR0913
     embedding_service: EmbeddingServiceDependency,
     search: str | None = None,
     search_type: Literal["like", "semantic"] = "semantic",
-    top_k: Annotated[int, Query(gt=0, description="Only used with semantic search.")] = 5,
+    top_k: Annotated[
+        int,
+        Query(gt=0, description="Only used with semantic search."),
+    ] = similarity_search_settings.top_k,
     sort_by: Literal["id", "content", "created_at", "updated_at"] = "id",
     order_by: Literal["asc", "desc"] = "desc",
     page: Annotated[int, Query(gt=0, description="Page number (1-based).")] = 1,
@@ -73,8 +82,11 @@ def list_notes(  # noqa: PLR0913
     If a search query is provided, uses semantic or LIKE search.
     Sorting and pagination are applied to all result sets.
     """
-    user_id = current_user.id
+    # Admin users can see all notes, regular users can only see their own notes
+    user_id = None if current_user.role == "admin" else current_user.id
+
     if search:
+        # Semantic search with embeddings
         if search_type == "semantic":
             search_embedding = embedding_service.embed(search)
             similarities = notes_repo.search_by_embedding(
@@ -100,6 +112,7 @@ def list_notes(  # noqa: PLR0913
                         score=scores[note.id],
                         created_at=note.created_at,
                         updated_at=note.updated_at,
+                        user_id=note.user_id,
                     )
                     for note in page_notes
                 ],
@@ -115,7 +128,13 @@ def list_notes(  # noqa: PLR0913
             limit=limit,
             pages=pages,
             items=[
-                Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
+                Note(
+                    id=note.id,
+                    content=note.content,
+                    created_at=note.created_at,
+                    updated_at=note.updated_at,
+                    user_id=note.user_id,
+                )
                 for note in page_notes
             ],
         )
@@ -130,7 +149,13 @@ def list_notes(  # noqa: PLR0913
         limit=limit,
         pages=pages,
         items=[
-            Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
+            Note(
+                id=note.id,
+                content=note.content,
+                created_at=note.created_at,
+                updated_at=note.updated_at,
+                user_id=note.user_id,
+            )
             for note in page_notes
         ],
     )
@@ -143,11 +168,18 @@ def get_note(
     note_id: int,
 ) -> Note | None:
     """Get a single note by its ID."""
-    user_id = current_user.id
+    # Admin users can see all notes, regular users can only see their own notes
+    user_id = None if current_user.role == "admin" else current_user.id
     note = notes_repo.get_one_or_none(user_id=user_id, note_id=note_id)
     if not note:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Note not found")
-    return Note(id=note.id, content=note.content, created_at=note.created_at, updated_at=note.updated_at)
+    return Note(
+        id=note.id,
+        content=note.content,
+        created_at=note.created_at,
+        updated_at=note.updated_at,
+        user_id=note.user_id,
+    )
 
 
 @router.delete("/{note_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -157,7 +189,8 @@ def delete_note(
     note_id: int,
 ) -> None:
     """Delete a note by its ID."""
-    user_id = current_user.id
+    # Admin users can delete any note, regular users can only delete their own notes
+    user_id = None if current_user.role == "admin" else current_user.id
     deleted = notes_repo.delete(user_id=user_id, note_id=note_id)
     if not deleted:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Note not found")

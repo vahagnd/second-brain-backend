@@ -13,6 +13,7 @@ class Note(BaseModel):
     content: str
     created_at: datetime.datetime | None = None
     updated_at: datetime.datetime | None = None
+    user_id: int
 
 
 class NoteWithScore(Note):

@@ -18,20 +18,36 @@ class NoteRepository:
         self.session.refresh(note)
         return note
 
-    def get_all(self, user_id: int) -> list[Note]:
-        """Get all notes."""
-        stmt = select(Note).where(Note.user_id == user_id).order_by(Note.created_at.desc())
+    def get_all(self, user_id: int | None) -> list[Note]:
+        """Get all notes.
+
+        If user_id is provided, only return notes for that user.
+        If user_id is None, return all notes.
+        """
+        stmt = select(Note).order_by(Note.created_at.desc())
+        if user_id is not None:
+            stmt = stmt.where(Note.user_id == user_id)
         result = self.session.execute(stmt)
         return result.scalars().all()
 
-    def get_one_or_none(self, user_id: int, note_id: int) -> Note | None:
-        """Get a single note by its ID, or return None if it doesn't exist."""
-        stmt = select(Note).where(Note.id == note_id, Note.user_id == user_id)
+    def get_one_or_none(self, user_id: int | None, note_id: int) -> Note | None:
+        """Get a single note by its ID, or return None if it doesn't exist.
+
+        If user_id is provided, only return the note if it belongs to that user.
+        If user_id is None, ignore user ownership.
+        """
+        stmt = select(Note).where(Note.id == note_id)
+        if user_id is not None:
+            stmt = stmt.where(Note.user_id == user_id)
         result = self.session.execute(stmt)
         return result.scalars().first()
 
-    def delete(self, user_id: int, note_id: int) -> bool:
-        """Delete a note by its ID. Returns True if the note was deleted, False if it didn't exist."""
+    def delete(self, user_id: int | None, note_id: int) -> bool:
+        """Delete a note by its ID. Returns True if the note was deleted, False if it didn't exist.
+
+        If user_id is provided, only delete the note if it belongs to that user.
+        If user_id is None, ignore user ownership.
+        """
         note = self.get_one_or_none(user_id, note_id)
         if not note:
             return False
@@ -39,29 +55,33 @@ class NoteRepository:
         self.session.commit()
         return True
 
-    def search_by_content(self, user_id: int, query: str) -> list[Note]:
-        """Search for notes that have content containing the given query string."""
-        stmt = (
-            select(Note)
-            .where(Note.user_id == user_id, Note.content.ilike(f"%{query}%"))
-            .order_by(Note.created_at.desc())
-        )
+    def search_by_content(self, user_id: int | None, query: str) -> list[Note]:
+        """Search for notes that have content containing the given query string.
+
+        If user_id is provided, only search within notes that belong to that user.
+        If user_id is None, search across all notes.
+        """
+        stmt = select(Note).where(Note.content.ilike(f"%{query}%")).order_by(Note.created_at.desc())
+        if user_id is not None:
+            stmt = stmt.where(Note.user_id == user_id)
         result = self.session.execute(stmt)
         return result.scalars().all()
 
     def search_by_embedding(
         self,
-        user_id: int,
+        user_id: int | None,
         query_embedding: list[float],
         top_k: int = 5,
         threshold: float | None = None,
     ) -> list[(Note, float)]:
-        """
-        Search for notes by semantic similarity using embeddings.
+        """Search for notes by semantic similarity using embeddings.
+
+        If user_id is provided, only search within notes that belong to that user.
+        If user_id is None, search across all notes.
 
         Parameters
         ----------
-        user_id : int
+        user_id : int | None
             The ID of the user whose notes to search.
         query_embedding : list[float]
             The embedding vector of the search query.

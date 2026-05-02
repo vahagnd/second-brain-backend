@@ -15,7 +15,11 @@ from settings import jwt_settings
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/login", status_code=status.HTTP_200_OK)
+@router.post(
+    "/login",
+    status_code=status.HTTP_200_OK,
+    responses={401: {"description": "Invalid credentials"}},
+)
 def login(
     login_body: LoginRequest,
     user_repo: UserRepositoryDependency,
@@ -49,7 +53,11 @@ def login(
     return TokenResponse(access_token=access_token, refresh_token=refresh_token, token_type="bearer")  # noqa: S106
 
 
-@router.post("/refresh", status_code=status.HTTP_200_OK)
+@router.post(
+    "/refresh",
+    status_code=status.HTTP_200_OK,
+    responses={401: {"description": "Invalid or expired refresh token"}},
+)
 def refresh(
     body: RefreshRequest,
     user_repo: UserRepositoryDependency,

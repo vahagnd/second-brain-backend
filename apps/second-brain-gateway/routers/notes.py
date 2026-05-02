@@ -15,10 +15,21 @@ from models.note import (
 from settings import pagination_settings, similarity_search_settings
 from utils.pagination import sort_and_paginate
 
-router = APIRouter(prefix="/notes", tags=["notes"])
+router = APIRouter(
+    prefix="/notes",
+    tags=["notes"],
+    responses={
+        401: {"description": "Unauthenticated"},
+        403: {"description": "Forbidden - insufficient permissions"},
+    },
+)
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    status_code=status.HTTP_201_CREATED,
+    responses={409: {"description": "A similar note already exists", "model": NoteListDuplicateResponse}},
+)
 def create_note(
     current_user: CurrentUserDependency,
     notes_repo: NoteRepositoryDependency,
@@ -42,7 +53,7 @@ def create_note(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=NoteListDuplicateResponse(
-                message="One or more similar notes already exist.",
+                message="One or more similar notes already exist",
                 similar_notes=[
                     NoteWithScore(
                         id=note.id,
@@ -169,7 +180,11 @@ def list_notes(  # noqa: PLR0913
     )
 
 
-@router.get("/{note_id}", status_code=status.HTTP_200_OK)
+@router.get(
+    "/{note_id}",
+    status_code=status.HTTP_200_OK,
+    responses={404: {"description": "Note not found"}},
+)
 def get_note(
     current_user: CurrentUserDependency,
     notes_repo: NoteRepositoryDependency,
@@ -190,7 +205,11 @@ def get_note(
     )
 
 
-@router.delete("/{note_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{note_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={404: {"description": "Note not found"}},
+)
 def delete_note(
     current_user: CurrentUserDependency,
     notes_repo: NoteRepositoryDependency,

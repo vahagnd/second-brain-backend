@@ -4,10 +4,21 @@ from fastapi import APIRouter, HTTPException, status
 from models.user import UserCreate, UserDetail, UserListResponse, UserUpdate, UserUpdatePassword
 from second_brain_service.services.auth import AuthService
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter(
+    prefix="/admin",
+    tags=["admin"],
+    responses={
+        401: {"description": "Unauthenticated"},
+        403: {"description": "Forbidden - admin role required"},
+    },
+)
 
 
-@router.post("/users", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/users",
+    status_code=status.HTTP_201_CREATED,
+    responses={409: {"description": "Username already exists"}},
+)
 def create_user(
     admin_user: AdminUserDependency,
     user_repo: UserRepositoryDependency,
@@ -32,7 +43,11 @@ def list_users(
     return UserListResponse(total=len(user_list), items=user_list)
 
 
-@router.get("/users/{user_id}", status_code=status.HTTP_200_OK)
+@router.get(
+    "/users/{user_id}",
+    status_code=status.HTTP_200_OK,
+    responses={404: {"description": "User not found"}},
+)
 def get_user(
     admin_user: AdminUserDependency,
     user_id: int,
@@ -45,7 +60,11 @@ def get_user(
     return UserDetail(id=user.id, username=user.username, role=user.role)
 
 
-@router.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/users/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={404: {"description": "User not found"}},
+)
 def delete_user(
     admin_user: AdminUserDependency,
     user_id: int,
@@ -57,7 +76,14 @@ def delete_user(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 
-@router.patch("/users/{user_id}", status_code=status.HTTP_200_OK)
+@router.patch(
+    "/users/{user_id}",
+    status_code=status.HTTP_200_OK,
+    responses={
+        404: {"description": "User not found"},
+        409: {"description": "Username already taken"},
+    },
+)
 def update_user(
     admin_user: AdminUserDependency,
     user_repo: UserRepositoryDependency,
@@ -77,7 +103,11 @@ def update_user(
     return UserDetail(id=updated.id, username=updated.username, role=updated.role)
 
 
-@router.patch("/users/{user_id}/password", status_code=status.HTTP_200_OK)
+@router.patch(
+    "/users/{user_id}/password",
+    status_code=status.HTTP_200_OK,
+    responses={404: {"description": "User not found"}},
+)
 def update_user_password(
     admin_user: AdminUserDependency,
     user_repo: UserRepositoryDependency,

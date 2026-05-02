@@ -1,10 +1,12 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class UserCreate(BaseModel):
     username: str
     password: str
     role: str = "user"
+
+    model_config = ConfigDict(extra="forbid")
 
 
 class UserDetail(BaseModel):
@@ -21,6 +23,10 @@ class UserListResponse(BaseModel):
 class UserUpdate(BaseModel):
     new_username: str | None = None
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class UserUpdatePassword(BaseModel):
     new_password: str
+
+    model_config = ConfigDict(extra="forbid")

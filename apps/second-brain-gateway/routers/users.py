@@ -3,7 +3,11 @@ from dependencies.user import CurrentUserDependency
 from fastapi import APIRouter, HTTPException, status
 from models.user import UserDetail, UserUpdate
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(
+    prefix="/users",
+    tags=["users"],
+    responses={401: {"description": "Unauthenticated"}},
+)
 
 
 @router.get("/me", status_code=status.HTTP_200_OK)
@@ -12,7 +16,11 @@ def get_current_user(current_user: CurrentUserDependency) -> UserDetail:
     return UserDetail(id=current_user.id, username=current_user.username, role=current_user.role)
 
 
-@router.patch("/me", status_code=status.HTTP_200_OK)
+@router.patch(
+    "/me",
+    status_code=status.HTTP_200_OK,
+    responses={409: {"description": "Username already taken"}},
+)
 def update_me(
     update_body: UserUpdate,
     current_user: CurrentUserDependency,

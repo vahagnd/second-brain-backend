@@ -1,7 +1,6 @@
 # AI Agent Rules
 
 ## Get information about project structure and existing microservices from:
- - From analytics readme - [docs/analytics/README.md](docs/analytics/README.md)
  - Docker compose file - [doocker-compose.yml](docker-compose.yml)
 
 ## Get more detailed information about existing apps from analytics files:

@@ -19,20 +19,6 @@ Client → Gateway → Repository → PostgreSQL
 
 ---
 
-## Next Phase
-
-### Phase: Usability Layer
-
-Focus on making the system usable:
-
-- Pagination for notes
-- Improved search filtering
-- Basic sorting (date, relevance)
-- Input validation improvements
-- Consistent response schemas
-
----
-
 ## Future Phase
 
 Only after system is stable:

@@ -2,6 +2,7 @@ import logging
 import time
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from routers import init_routers
 from settings import app_settings
 
@@ -29,6 +30,14 @@ async def log_requests(request: Request, call_next):  # noqa: ANN001, ANN201
     response = await call_next(request)
     logger.info("%s %s %s %.3fs", request.method, request.url.path, response.status_code, time.time() - start)
     return response
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=app_settings.allow_origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 init_routers(app=app)

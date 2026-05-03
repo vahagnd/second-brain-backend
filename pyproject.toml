@@ -17,6 +17,9 @@ dev = [
     "pre-commit",
     "ipykernel",
 ]
+test = [
+    "pytest>=9.0.3",
+]
 
 [tool.uv]
 package = false

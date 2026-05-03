@@ -11,3 +11,14 @@
 ## 3. Package manager
 - Use **uv** from Astral to install dependencies
 - Never use pip directly
+
+## 4. Tests
+- All tests should be inside folder /tests
+- Tests should be INDEPENDENT and should NOT leave anything behind, proper cleanup IS REQUIRED
+- For tests use `pytest`, its already added into dependencies dont worry about it
+- Test names should include case name from case files - for example test_11_something_soemthing
+- Dont use classes, tests should be grouped in modules
+- Try to use common fixtures inside root tests/conftest.py, create new conftests if nececcary
+- Test cases files are here - [tests/cases/](tests/cases/)
+- Tests should be grouped by cases inside subfolders
+- E2E tests should be added in [tests/e2e-tests/](tests/e2e-tests/) directory

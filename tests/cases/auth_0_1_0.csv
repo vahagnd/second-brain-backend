@@ -1,0 +1,17 @@
+TC-ID,Group,Method,Endpoint,Description,Auth,Request Body / Params,Expected Status,Expected Response
+TC-AUTH-001,Authorization,POST,/auth/login,Login - success,None,"{""username"": ""user"", ""password"": ""pass""}",200,"{""access_token"": ""string"", ""refresh_token"": ""string"", ""token_type"": ""bearer""}"
+TC-AUTH-002,Authorization,POST,/auth/login,Login - wrong password,None,"{""username"": ""user"", ""password"": ""wrong""}",401,Invalid credentials
+TC-AUTH-003,Authorization,POST,/auth/login,Login - unknown username,None,"{""username"": ""ghost"", ""password"": ""pass""}",401,Invalid credentials
+TC-AUTH-004,Authorization,POST,/auth/refresh,Refresh token - success,None,"{""refresh_token"": ""<valid_token>""}",200,"{""access_token"": ""string"", ""refresh_token"": ""string"", ""token_type"": ""bearer""}"
+TC-AUTH-005,Authorization,POST,/auth/refresh,Refresh token - expired token,None,"{""refresh_token"": ""<expired_token>""}",401,Invalid or expired refresh token
+TC-AUTH-006,Authorization,POST,/auth/refresh,Refresh token - invalid token,None,"{""refresh_token"": ""garbage""}",401,Invalid or expired refresh token
+TC-AUTH-007,Authorization,POST,/auth/refresh,Refresh token - revoked token (post-logout),None,"{""refresh_token"": ""<revoked_token>""}",401,Invalid or expired refresh token
+TC-AUTH-008,Authorization,POST,/auth/logout,Logout - success,User token,,200,"{""message"": ""Logged out successfully""}"
+TC-AUTH-009,Authorization,POST,/auth/logout,Logout - no auth,None,,401,Unauthenticated
+TC-AUTH-010,Authorization,POST,/auth/logout,Access token blacklisted after logout,Blacklisted token,Any protected endpoint,401,Unauthenticated
+TC-AUTH-011,Authorization,GET,/users/me,Get current user - success,User token,,200,"{""id"": <int>, ""username"": ""string"", ""role"": ""string""}"
+TC-AUTH-012,Authorization,GET,/users/me,Get current user - no auth,None,,401,Unauthenticated
+TC-AUTH-013,Authorization,PATCH,/users/me,Update own username - success,User token,"{""new_username"": ""newname""}",200,"{""id"": <int>, ""username"": ""newname"", ""role"": ""string""}"
+TC-AUTH-014,Authorization,PATCH,/users/me,Update own username - conflict,User token,"{""new_username"": ""takenname""}",409,Username already taken
+TC-AUTH-015,Authorization,PATCH,/users/me,Update own username - no auth,None,"{""new_username"": ""x""}",401,Unauthenticated
+TC-AUTH-016,Authorization,PATCH,/users/me,Update own username - null value,User token,"{""new_username"": null}",200,Username unchanged

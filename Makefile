@@ -50,3 +50,18 @@ alembic-upgrade-head:
 
 alembic-get-current:
 	uv run --env-file .env.local alembic current
+
+# ===================================================================
+# Testing
+# ===================================================================
+tests-e2e:
+	uv run --env-file .env pytest tests -m e2e
+
+tests-admin:
+	uv run --env-file .env pytest tests -m admin
+
+tests-notes:
+	uv run --env-file .env pytest tests -m notes
+
+tests-auth:
+	uv run --env-file .env pytest tests -m auth

@@ -17,6 +17,10 @@ dev = [
     "pre-commit",
     "ipykernel",
 ]
+test = [
+    "pytest>=9.0.3",
+    "httpx>=0.27.0",
+]
 
 [tool.uv]
 package = false
@@ -102,6 +106,7 @@ convention = "numpy"
 "apps/second-brain-gateway/routers/admin.py" = ["ARG001"]
 "apps/second-brain-gateway/routers/auth.py" = ["ARG001"]
 "apps/*" = ["INP001"]
+"tests/*" = ["S", "D", "INP001", "PLR2004", "ARG002", "RUF003", "ERA001", "ANN", "RUF002"]
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.
@@ -129,3 +134,28 @@ docstring-code-format = false
 # This only has an effect when the `docstring-code-format` setting is
 # enabled.
 docstring-code-line-length = "dynamic"
+
+
+[tool.pytest.ini_options]
+# https://docs.pytest.org/en/6.2.x/customize.html#pyproject-toml
+# Directories that are not visited by pytest collector:
+norecursedirs =["hooks", "*.egg", ".eggs", "dist", "build", "docs", ".tox", ".git", "__pycache__"]
+testpaths = ["tests"]
+doctest_optionflags = ["NUMBER", "NORMALIZE_WHITESPACE", "IGNORE_EXCEPTION_DETAIL"]
+
+# Extra options:
+addopts = [
+  "-v",
+  "--strict-markers",
+  "--tb=short",
+  "--doctest-modules",
+  "--doctest-continue-on-failure",
+  "--durations=10",
+]
+
+markers = [
+    "e2e",
+    "notes",
+    "auth",
+    "admin",
+]

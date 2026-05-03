@@ -1,0 +1,25 @@
+TC-ID,Group,Method,Endpoint,Description,Auth,Request Body / Params,Expected Status,Expected Response
+TC-ADM-001,Administration,POST,/admin/users,Create user - success,Admin,"{""username"": ""testuser"", ""password"": ""pass123"", ""role"": ""user""}",201,"{""id"": <int>, ""username"": ""testuser"", ""role"": ""user""}"
+TC-ADM-002,Administration,POST,/admin/users,Create user - duplicate username,Admin,"{""username"": ""existing"", ""password"": ""pass123"", ""role"": ""user""}",409,Conflict error
+TC-ADM-003,Administration,POST,/admin/users,Create user - no auth,None,"{""username"": ""u"", ""password"": ""p"", ""role"": ""user""}",401,Unauthenticated
+TC-ADM-004,Administration,POST,/admin/users,Create user - non-admin role,User token,"{""username"": ""u"", ""password"": ""p"", ""role"": ""user""}",403,Forbidden
+TC-ADM-005,Administration,GET,/admin/users,List all users - success,Admin,,200,"{""total"": <int>, ""items"": [...]}"
+TC-ADM-006,Administration,GET,/admin/users,List all users - no auth,None,,401,Unauthenticated
+TC-ADM-007,Administration,GET,/admin/users,List all users - non-admin,User token,,403,Forbidden
+TC-ADM-008,Administration,GET,/admin/users/{user_id},Get user by ID - success,Admin,user_id=<existing>,200,"{""id"": <int>, ""username"": ""string"", ""role"": ""string""}"
+TC-ADM-009,Administration,GET,/admin/users/{user_id},Get user by ID - not found,Admin,user_id=99999,404,User not found
+TC-ADM-010,Administration,GET,/admin/users/{user_id},Get user by ID - no auth,None,user_id=1,401,Unauthenticated
+TC-ADM-011,Administration,GET,/admin/users/{user_id},Get user by ID - non-admin,User token,user_id=1,403,Forbidden
+TC-ADM-012,Administration,DELETE,/admin/users/{user_id},Delete user - success,Admin,user_id=<existing>,204,No content
+TC-ADM-013,Administration,DELETE,/admin/users/{user_id},Delete user - not found,Admin,user_id=99999,404,User not found
+TC-ADM-014,Administration,DELETE,/admin/users/{user_id},Delete user - no auth,None,user_id=1,401,Unauthenticated
+TC-ADM-015,Administration,DELETE,/admin/users/{user_id},Delete user - non-admin,User token,user_id=1,403,Forbidden
+TC-ADM-016,Administration,PATCH,/admin/users/{user_id},Update username - success,Admin,"{""new_username"": ""newname""}",200,"{""id"": <int>, ""username"": ""newname"", ""role"": ""string""}"
+TC-ADM-017,Administration,PATCH,/admin/users/{user_id},Update username - conflict,Admin,"{""new_username"": ""takenname""}",409,Username already taken
+TC-ADM-018,Administration,PATCH,/admin/users/{user_id},Update username - not found,Admin,"user_id=99999, {""new_username"": ""x""}",404,User not found
+TC-ADM-019,Administration,PATCH,/admin/users/{user_id},Update username - no auth,None,"{""new_username"": ""x""}",401,Unauthenticated
+TC-ADM-020,Administration,PATCH,/admin/users/{user_id},Update username - non-admin,User token,"{""new_username"": ""x""}",403,Forbidden
+TC-ADM-021,Administration,PATCH,/admin/users/{user_id}/password,Update password - success,Admin,"{""new_password"": ""newpass123""}",200,"{""id"": <int>, ""username"": ""string"", ""role"": ""string""}"
+TC-ADM-022,Administration,PATCH,/admin/users/{user_id}/password,Update password - not found,Admin,"user_id=99999, {""new_password"": ""x""}",404,User not found
+TC-ADM-023,Administration,PATCH,/admin/users/{user_id}/password,Update password - no auth,None,"{""new_password"": ""x""}",401,Unauthenticated
+TC-ADM-024,Administration,PATCH,/admin/users/{user_id}/password,Update password - non-admin,User token,"{""new_password"": ""x""}",403,Forbidden

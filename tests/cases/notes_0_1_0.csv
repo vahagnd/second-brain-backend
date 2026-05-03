@@ -1,0 +1,22 @@
+TC-ID,Group,Method,Endpoint,Description,Auth,Request Body / Params,Expected Status,Expected Response
+TC-NOTES-001,Notes,GET,/notes,List notes - success (user sees own only),User token,,200,"{""total"": <int>, ""page"": 1, ""limit"": 10, ""items"": [...]}"
+TC-NOTES-002,Notes,GET,/notes,List notes - admin sees all notes,Admin token,,200,Notes from all users returned
+TC-NOTES-003,Notes,GET,/notes,List notes - no auth,None,,401,Unauthenticated
+TC-NOTES-004,Notes,GET,/notes,List notes - semantic search,User token,"search=query&search_type=semantic&top_k=5",200,Items include score field
+TC-NOTES-005,Notes,GET,/notes,List notes - LIKE search,User token,"search=query&search_type=like",200,Items without score field
+TC-NOTES-006,Notes,GET,/notes,List notes - pagination,User token,"page=2&limit=5",200,"{""page"": 2, ""limit"": 5, ""items"": [...]}"
+TC-NOTES-007,Notes,GET,/notes,List notes - sort by created_at desc,User token,"sort_by=created_at&order_by=desc",200,Notes sorted newest first
+TC-NOTES-008,Notes,GET,/notes,List notes - sort by content asc,User token,"sort_by=content&order_by=asc",200,Notes sorted alphabetically
+TC-NOTES-009,Notes,POST,/notes,Create note - success,User token,"{""content"": ""My new note""}",201,"{""id"": <int>, ""content"": ""My new note"", ""user_id"": <int>}"
+TC-NOTES-010,Notes,POST,/notes,Create note - semantic duplicate detected,User token,"{""content"": ""Very similar existing note""}",409,"{""message"": ""One or more similar notes already exist"", ""similar_notes"": [...]}"
+TC-NOTES-011,Notes,POST,/notes,Create note - no auth,None,"{""content"": ""note""}",401,Unauthenticated
+TC-NOTES-012,Notes,GET,/notes/{note_id},Get note by ID - owner access,User token,note_id=<own>,200,Note object
+TC-NOTES-013,Notes,GET,/notes/{note_id},Get note by ID - admin access any note,Admin token,note_id=<other user's>,200,Note object
+TC-NOTES-014,Notes,GET,/notes/{note_id},Get note by ID - user accesses other's note,User token,note_id=<other user's>,404,Note not found
+TC-NOTES-015,Notes,GET,/notes/{note_id},Get note by ID - not found,User token,note_id=99999,404,Note not found
+TC-NOTES-016,Notes,GET,/notes/{note_id},Get note by ID - no auth,None,note_id=1,401,Unauthenticated
+TC-NOTES-017,Notes,DELETE,/notes/{note_id},Delete note - owner success,User token,note_id=<own>,204,No content
+TC-NOTES-018,Notes,DELETE,/notes/{note_id},Delete note - admin deletes any note,Admin token,note_id=<other user's>,204,No content
+TC-NOTES-019,Notes,DELETE,/notes/{note_id},Delete note - user deletes other's note,User token,note_id=<other user's>,404,Note not found
+TC-NOTES-020,Notes,DELETE,/notes/{note_id},Delete note - not found,User token,note_id=99999,404,Note not found
+TC-NOTES-021,Notes,DELETE,/notes/{note_id},Delete note - no auth,None,note_id=1,401,Unauthenticated

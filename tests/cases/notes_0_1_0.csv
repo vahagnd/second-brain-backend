@@ -12,11 +12,11 @@ TC-NOTES-010,Notes,POST,/notes,Create note - semantic duplicate detected,User to
 TC-NOTES-011,Notes,POST,/notes,Create note - no auth,None,"{""content"": ""note""}",401,Unauthenticated
 TC-NOTES-012,Notes,GET,/notes/{note_id},Get note by ID - owner access,User token,note_id=<own>,200,Note object
 TC-NOTES-013,Notes,GET,/notes/{note_id},Get note by ID - admin access any note,Admin token,note_id=<other user's>,200,Note object
-TC-NOTES-014,Notes,GET,/notes/{note_id},Get note by ID - user accesses other's note,User token,note_id=<other user's>,403,Forbidden
+TC-NOTES-014,Notes,GET,/notes/{note_id},Get note by ID - user accesses other's note,User token,note_id=<other user's>,404,Note not found
 TC-NOTES-015,Notes,GET,/notes/{note_id},Get note by ID - not found,User token,note_id=99999,404,Note not found
 TC-NOTES-016,Notes,GET,/notes/{note_id},Get note by ID - no auth,None,note_id=1,401,Unauthenticated
 TC-NOTES-017,Notes,DELETE,/notes/{note_id},Delete note - owner success,User token,note_id=<own>,204,No content
 TC-NOTES-018,Notes,DELETE,/notes/{note_id},Delete note - admin deletes any note,Admin token,note_id=<other user's>,204,No content
-TC-NOTES-019,Notes,DELETE,/notes/{note_id},Delete note - user deletes other's note,User token,note_id=<other user's>,403,Forbidden
+TC-NOTES-019,Notes,DELETE,/notes/{note_id},Delete note - user deletes other's note,User token,note_id=<other user's>,404,Note not found
 TC-NOTES-020,Notes,DELETE,/notes/{note_id},Delete note - not found,User token,note_id=99999,404,Note not found
 TC-NOTES-021,Notes,DELETE,/notes/{note_id},Delete note - no auth,None,note_id=1,401,Unauthenticated

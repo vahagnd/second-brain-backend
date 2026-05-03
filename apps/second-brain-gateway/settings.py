@@ -1,4 +1,3 @@
-from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -7,15 +6,7 @@ class AppSettings(BaseSettings):
 
     api_prefix: str = "/api/v1"
     version: str = "v0.0.0"
-
-    allow_origins: list[str] = ["http://localhost:4200"]
-
-    @field_validator("allow_origins", mode="before")
-    @classmethod
-    def split_origins(cls, v):  # noqa: ANN001, ANN206
-        if isinstance(v, str):
-            return [x.strip() for x in v.split(",")]
-        return v
+    allow_origins: list[str] = []
 
 
 class SimilaritySearchSettings(BaseSettings):

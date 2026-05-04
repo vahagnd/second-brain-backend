@@ -17,5 +17,5 @@ notes_files/
 # MacOS files
 .DS_Store
 
-# Other files
-PLAN.md
+# Docs
+PROMPT.md

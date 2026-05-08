@@ -12,7 +12,7 @@
 - Use **uv** from Astral to install dependencies
 - Never use pip directly
 
-## 4. Tests
+## 4. Tests (Check this section ONLY if adding tests)
 - All tests should be inside folder /tests
 - Tests should be INDEPENDENT and should NOT leave anything behind, proper cleanup IS REQUIRED
 - For tests use `pytest`, its already added into dependencies dont worry about it

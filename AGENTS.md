@@ -9,8 +9,13 @@
 ## Before starting any implementation or coding task load rules from file:
 - Development rules [docs/DEV_RULES.md](docs/DEV_RULES.md)
 
-## Before writing tests
-- Before writing any tests check out part about Tests in development rules [docs/DEV_RULES.md](docs/DEV_RULES.md)
-
 ## After adding new features
-- Add about new changes in file [docs/CHANGELOG.md](docs/CHANGELOG.md)
+- Add new changes to [docs/CHANGELOG.md](docs/CHANGELOG.md) under `## [Unreleased]`. Use this format for each entry:
+```
+  - Short summary line
+    <details>
+    Detailed description: inputs, outputs, error cases, side effects.
+    </details>
+```
+- Update API analytics at [docs/analytics/API_ANALYTICS.md](docs/analytics/API_ANALYTICS.md)
+- DO NOT add tests, if not told explicitly

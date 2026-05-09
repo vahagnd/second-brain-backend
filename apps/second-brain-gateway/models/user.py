@@ -26,6 +26,13 @@ class UserUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class UserChangePassword(BaseModel):
+    current_password: str
+    new_password: str
+
+    model_config = ConfigDict(extra="forbid")
+
+
 class UserUpdatePassword(BaseModel):
     new_password: str
 

@@ -1,10 +1,15 @@
 from typing import Annotated
 
 from fastapi.params import Depends
+from second_brain_db.repository.feedback import FeedbackRepository
 from second_brain_db.repository.note import NoteRepository
 from second_brain_db.repository.user import UserRepository
 
 from dependencies.db import DBSessionDependency
+
+
+def get_feedback_repository(session: DBSessionDependency) -> FeedbackRepository:
+    return FeedbackRepository(session)
 
 
 def get_notes_repository(session: DBSessionDependency) -> NoteRepository:
@@ -23,4 +28,9 @@ NoteRepositoryDependency = Annotated[
 UserRepositoryDependency = Annotated[
     UserRepository,
     Depends(get_user_repository),
+]
+
+FeedbackRepositoryDependency = Annotated[
+    FeedbackRepository,
+    Depends(get_feedback_repository),
 ]

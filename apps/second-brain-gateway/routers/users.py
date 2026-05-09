@@ -1,9 +1,10 @@
 import logging
 
 from dependencies.auth import RefreshTokenRepositoryDependency
-from dependencies.repositories import UserRepositoryDependency
+from dependencies.repositories import FeedbackRepositoryDependency, UserRepositoryDependency
 from dependencies.user import CurrentUserDependency
 from fastapi import APIRouter, HTTPException, status
+from models.feedback import Feedback, FeedbackCreate
 from models.user import UserChangePassword, UserDetail, UserUpdate
 from second_brain_service.services.auth import AuthService
 
@@ -21,6 +22,24 @@ def get_current_user(current_user: CurrentUserDependency) -> UserDetail:
     """Get the current authenticated user's details."""
     logger.info("Get current user: user_id=%s", current_user.id)
     return UserDetail(id=current_user.id, username=current_user.username, role=current_user.role)
+
+
+@router.post("/feedback", status_code=status.HTTP_201_CREATED)
+def create_feedback(
+    create_body: FeedbackCreate,
+    current_user: CurrentUserDependency,
+    feedback_repo: FeedbackRepositoryDependency,
+) -> Feedback:
+    """Create feedback for the current authenticated user."""
+    feedback = feedback_repo.add(user_id=current_user.id, text=create_body.text)
+    logger.info("Feedback created: id=%s user_id=%s", feedback.id, current_user.id)
+    return Feedback(
+        id=feedback.id,
+        text=feedback.text,
+        created_at=feedback.created_at,
+        updated_at=feedback.updated_at,
+        user_id=feedback.user_id,
+    )
 
 
 @router.patch(

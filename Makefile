@@ -22,10 +22,10 @@ start-daemon:
 project-init-dev: --install-packages-dev --tools-install
 
 project-init-run:
-	uv sync --all-packages --no-dev --no-editable
+	uv sync --all-packages --no-dev
 
 --install-packages-dev:
-	uv sync --all-packages --all-groups --no-editable
+	uv sync --all-packages --all-groups
 
 --tools-install:
 	uv run pre-commit install --hook-type pre-commit
@@ -50,6 +50,9 @@ alembic-upgrade-head:
 
 alembic-get-current:
 	uv run --env-file .env.local alembic current
+
+alembic-downgrade:
+	uv run --env-file .env.local alembic downgrade -1
 
 # ===================================================================
 # Testing

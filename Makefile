@@ -2,18 +2,15 @@
 # Docker
 # ===================================================================
 
-start:
+start-daemon:
 	APP_VERSION=$(shell git describe --tags --always) \
-	docker compose up --build --remove-orphans
+	docker compose up --build --remove-orphans -d
 
 stop:
 	docker compose down
 
-restart: stop start
+restart: stop start-daemon
 
-start-daemon:
-	APP_VERSION=$(shell git describe --tags --always) \
-	docker compose up --build --remove-orphans -d
 
 # ===================================================================
 # Development

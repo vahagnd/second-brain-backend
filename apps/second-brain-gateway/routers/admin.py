@@ -1,8 +1,9 @@
 import logging
 
-from dependencies.repositories import UserRepositoryDependency
+from dependencies.repositories import FeedbackRepositoryDependency, UserRepositoryDependency
 from dependencies.user import AdminUserDependency
 from fastapi import APIRouter, HTTPException, status
+from models.feedback import Feedback, FeedbackListResponse
 from models.user import UserCreate, UserDetail, UserListResponse, UserUpdate, UserUpdatePassword
 from second_brain_service.services.auth import AuthService
 
@@ -36,6 +37,35 @@ def create_user(
     user = user_repo.add(create_body.username, password_hash, create_body.role)
     logger.info("User created: id=%s username=%s role=%s", user.id, user.username, user.role)
     return UserDetail(id=user.id, username=user.username, role=user.role)
+
+
+@router.get("/feedback", status_code=status.HTTP_200_OK)
+def list_feedbacks(
+    admin_user: AdminUserDependency,
+    feedback_repo: FeedbackRepositoryDependency,
+) -> FeedbackListResponse:
+    """List all feedback."""
+    feedback_items = [Feedback.model_validate(feedback) for feedback in feedback_repo.get_all()]
+    logger.info("Listed feedback: total=%s", len(feedback_items))
+    return FeedbackListResponse(total=len(feedback_items), items=feedback_items)
+
+
+@router.delete(
+    "/feedback/{feedback_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={404: {"description": "Feedback not found"}},
+)
+def delete_feedback(
+    admin_user: AdminUserDependency,
+    feedback_id: int,
+    feedback_repo: FeedbackRepositoryDependency,
+) -> None:
+    """Delete feedback by ID."""
+    deleted = feedback_repo.delete(feedback_id)
+    if not deleted:
+        logger.warning("Delete feedback failed: not found: id=%s", feedback_id)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Feedback not found")
+    logger.info("Feedback deleted: id=%s", feedback_id)
 
 
 @router.get("/users", status_code=status.HTTP_200_OK)

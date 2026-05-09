@@ -1,7 +1,7 @@
 # Gateway API Analytics
 
 **Base path:** `/api/v1`
-**Total endpoints:** 19
+**Total endpoints:** 22
 
 ---
 
@@ -18,16 +18,19 @@
 | 7 | GET | `/users/me` | users | Yes | No | 200 |
 | 8 | PATCH | `/users/me` | users | Yes | No | 200 |
 | 9 | PATCH | `/users/me/password` | users | Yes | No | 200 |
-| 10 | GET | `/notes` | notes | Yes | No | 200 |
-| 11 | POST | `/notes` | notes | Yes | No | 201 |
-| 12 | GET | `/notes/{note_id}` | notes | Yes | No | 200 |
-| 13 | DELETE | `/notes/{note_id}` | notes | Yes | No | 204 |
-| 14 | POST | `/admin/users` | admin | Yes | Yes | 201 |
-| 15 | GET | `/admin/users` | admin | Yes | Yes | 200 |
-| 16 | GET | `/admin/users/{user_id}` | admin | Yes | Yes | 200 |
-| 17 | DELETE | `/admin/users/{user_id}` | admin | Yes | Yes | 204 |
-| 18 | PATCH | `/admin/users/{user_id}` | admin | Yes | Yes | 200 |
-| 19 | PATCH | `/admin/users/{user_id}/password` | admin | Yes | Yes | 200 |
+| 10 | POST | `/users/feedback` | users | Yes | No | 201 |
+| 11 | GET | `/notes` | notes | Yes | No | 200 |
+| 12 | POST | `/notes` | notes | Yes | No | 201 |
+| 13 | GET | `/notes/{note_id}` | notes | Yes | No | 200 |
+| 14 | DELETE | `/notes/{note_id}` | notes | Yes | No | 204 |
+| 15 | POST | `/admin/users` | admin | Yes | Yes | 201 |
+| 16 | GET | `/admin/feedback` | admin | Yes | Yes | 200 |
+| 17 | DELETE | `/admin/feedback/{feedback_id}` | admin | Yes | Yes | 204 |
+| 18 | GET | `/admin/users` | admin | Yes | Yes | 200 |
+| 19 | GET | `/admin/users/{user_id}` | admin | Yes | Yes | 200 |
+| 20 | DELETE | `/admin/users/{user_id}` | admin | Yes | Yes | 204 |
+| 21 | PATCH | `/admin/users/{user_id}` | admin | Yes | Yes | 200 |
+| 22 | PATCH | `/admin/users/{user_id}/password` | admin | Yes | Yes | 200 |
 
 ---
 
@@ -202,6 +205,30 @@
 
 ---
 
+#### `POST /users/feedback`
+
+- **Description:** Create feedback for the current authenticated user.
+- **Auth:** Bearer token (JWT)
+- **Request Body:**
+  ```json
+  { "text": "string" }
+  ```
+- **Response 201:**
+  ```json
+  {
+    "id": 1,
+    "text": "string",
+    "created_at": "2026-05-09T00:00:00Z",
+    "updated_at": "2026-05-09T00:00:00Z",
+    "user_id": 1
+  }
+  ```
+- **Response 401:** Unauthenticated
+- **Response 403:** Forbidden - insufficient permissions
+- **Response 422:** Validation error
+
+---
+
 ### Notes
 
 #### `GET /notes`
@@ -359,6 +386,47 @@
 
 ---
 
+#### `GET /admin/feedback`
+
+- **Description:** List all submitted feedback.
+- **Auth:** Bearer token (JWT) - admin role required
+- **Response 200:**
+  ```json
+  {
+    "total": 1,
+    "items": [
+      {
+        "id": 1,
+        "text": "string",
+        "created_at": "2026-05-09T00:00:00Z",
+        "updated_at": "2026-05-09T00:00:00Z",
+        "user_id": 1
+      }
+    ]
+  }
+  ```
+- **Response 401:** Unauthenticated
+- **Response 403:** Forbidden - admin role required
+
+---
+
+#### `DELETE /admin/feedback/{feedback_id}`
+
+- **Description:** Delete feedback by ID.
+- **Auth:** Bearer token (JWT) - admin role required
+- **Path Parameters:**
+
+  | Parameter | Type | Description |
+  |-----------|------|-------------|
+  | `feedback_id` | int | Feedback ID |
+
+- **Response 204:** No content
+- **Response 401:** Unauthenticated
+- **Response 403:** Forbidden - admin role required
+- **Response 404:** Feedback not found
+
+---
+
 #### `GET /admin/users`
 
 - **Description:** List all users.
@@ -488,38 +556,38 @@
 | health | 1 |
 | system | 1 |
 | auth | 4 |
-| users | 3 |
+| users | 4 |
 | notes | 4 |
-| admin | 6 |
-| **Total** | **19** |
+| admin | 8 |
+| **Total** | **22** |
 
 ### HTTP Method Distribution
 
 | Method | Count |
 |--------|------:|
-| GET | 8 |
-| POST | 5 |
+| GET | 9 |
+| POST | 6 |
 | PATCH | 4 |
-| DELETE | 2 |
-| **Total** | **19** |
+| DELETE | 3 |
+| **Total** | **22** |
 
 ### Auth Requirements
 
 | Category | Count |
 |----------|------:|
 | No auth required | 5 |
-| Auth required (any role) | 8 |
-| Auth required (admin only) | 6 |
-| **Total** | **19** |
+| Auth required (any role) | 9 |
+| Auth required (admin only) | 8 |
+| **Total** | **22** |
 
 ### Status Code Usage
 
 | Status Code | Meaning | Endpoint Count |
 |-------------|---------|:--------------:|
-| 200 | OK | 14 |
-| 201 | Created | 3 |
-| 204 | No Content | 2 |
-| 401 | Unauthorized | 16 |
-| 403 | Forbidden | 10 |
-| 404 | Not Found | 6 |
+| 200 | OK | 15 |
+| 201 | Created | 4 |
+| 204 | No Content | 3 |
+| 401 | Unauthorized | 19 |
+| 403 | Forbidden | 13 |
+| 404 | Not Found | 7 |
 | 409 | Conflict | 5 |

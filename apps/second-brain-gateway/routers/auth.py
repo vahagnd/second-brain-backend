@@ -9,13 +9,34 @@ from dependencies.auth import (
 from dependencies.repositories import UserRepositoryDependency
 from dependencies.user import CurrentUserDependency
 from fastapi import APIRouter, HTTPException, status
-from models.auth import LoginRequest, RefreshRequest, TokenResponse
+from models.auth import LoginRequest, RefreshRequest, SignupRequest, TokenResponse
+from models.user import UserDetail
 from second_brain_service.services.auth import AuthService
 from settings import jwt_settings
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+@router.post(
+    "/signup",
+    status_code=status.HTTP_201_CREATED,
+    responses={409: {"description": "Username already exists"}},
+)
+def signup(
+    signup_body: SignupRequest,
+    user_repo: UserRepositoryDependency,
+) -> UserDetail:
+    """Create a regular user account."""
+    if user_repo.get_one_or_none_by_username(signup_body.username):
+        logger.warning("Signup failed: username already exists: %s", signup_body.username)
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
+
+    password_hash = AuthService.hash_password(signup_body.password)
+    user = user_repo.add(signup_body.username, password_hash, "user")
+    logger.info("Signup successful: user_id=%s username=%s", user.id, user.username)
+    return UserDetail(id=user.id, username=user.username, role=user.role)
 
 
 @router.post(

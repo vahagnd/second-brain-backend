@@ -8,6 +8,13 @@ class LoginRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class SignupRequest(BaseModel):
+    username: str
+    password: str
+
+    model_config = ConfigDict(extra="forbid")
+
+
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str

@@ -30,13 +30,7 @@ build-backend = "hatchling.build"
 source = "uv-dynamic-versioning"
 
 [tool.uv-dynamic-versioning]
+style = "pep440"
 vcs = "git"
 strict = true
 fallback-version = "0.0.0"
-format-jinja = """
-{%- if distance == 0 -%}
-  {{ base }}
-{%- else -%}
-  {{ base }}-{{ distance }}-g{{ commit[:7] }}
-{%- endif -%}
-"""

@@ -22,10 +22,10 @@ start-daemon:
 project-init-dev: --install-packages-dev --tools-install
 
 project-init-run:
-	uv sync --all-packages --no-dev
+	uv sync --all-packages --no-dev --no-editable
 
 --install-packages-dev:
-	uv sync --all-packages --all-groups
+	uv sync --all-packages --all-groups --no-editable
 
 --tools-install:
 	uv run pre-commit install --hook-type pre-commit

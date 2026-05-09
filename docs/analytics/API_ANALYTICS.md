@@ -1,7 +1,7 @@
 # Gateway API Analytics
 
 **Base path:** `/api/v1`
-**Total endpoints:** 17
+**Total endpoints:** 19
 
 ---
 
@@ -11,21 +11,23 @@
 |---|--------|------|-----|:---:|:---:|:---:|
 | 1 | GET | `/health` | health | No | No | 200 |
 | 2 | GET | `/version` | system | No | No | 200 |
-| 3 | POST | `/auth/login` | auth | No | No | 200 |
-| 4 | POST | `/auth/refresh` | auth | No | No | 200 |
-| 5 | POST | `/auth/logout` | auth | Yes | No | 200 |
-| 6 | GET | `/users/me` | users | Yes | No | 200 |
-| 7 | PATCH | `/users/me` | users | Yes | No | 200 |
-| 8 | GET | `/notes` | notes | Yes | No | 200 |
-| 9 | POST | `/notes` | notes | Yes | No | 201 |
-| 10 | GET | `/notes/{note_id}` | notes | Yes | No | 200 |
-| 11 | DELETE | `/notes/{note_id}` | notes | Yes | No | 204 |
-| 12 | POST | `/admin/users` | admin | Yes | Yes | 201 |
-| 13 | GET | `/admin/users` | admin | Yes | Yes | 200 |
-| 14 | GET | `/admin/users/{user_id}` | admin | Yes | Yes | 200 |
-| 15 | DELETE | `/admin/users/{user_id}` | admin | Yes | Yes | 204 |
-| 16 | PATCH | `/admin/users/{user_id}` | admin | Yes | Yes | 200 |
-| 17 | PATCH | `/admin/users/{user_id}/password` | admin | Yes | Yes | 200 |
+| 3 | POST | `/auth/signup` | auth | No | No | 201 |
+| 4 | POST | `/auth/login` | auth | No | No | 200 |
+| 5 | POST | `/auth/refresh` | auth | No | No | 200 |
+| 6 | POST | `/auth/logout` | auth | Yes | No | 200 |
+| 7 | GET | `/users/me` | users | Yes | No | 200 |
+| 8 | PATCH | `/users/me` | users | Yes | No | 200 |
+| 9 | PATCH | `/users/me/password` | users | Yes | No | 200 |
+| 10 | GET | `/notes` | notes | Yes | No | 200 |
+| 11 | POST | `/notes` | notes | Yes | No | 201 |
+| 12 | GET | `/notes/{note_id}` | notes | Yes | No | 200 |
+| 13 | DELETE | `/notes/{note_id}` | notes | Yes | No | 204 |
+| 14 | POST | `/admin/users` | admin | Yes | Yes | 201 |
+| 15 | GET | `/admin/users` | admin | Yes | Yes | 200 |
+| 16 | GET | `/admin/users/{user_id}` | admin | Yes | Yes | 200 |
+| 17 | DELETE | `/admin/users/{user_id}` | admin | Yes | Yes | 204 |
+| 18 | PATCH | `/admin/users/{user_id}` | admin | Yes | Yes | 200 |
+| 19 | PATCH | `/admin/users/{user_id}/password` | admin | Yes | Yes | 200 |
 
 ---
 
@@ -60,6 +62,29 @@
 ---
 
 ### Auth
+
+#### `POST /auth/signup`
+
+- **Description:** Create a regular user account.
+- **Auth:** None
+- **Request Body:**
+  ```json
+  {
+    "username": "string",
+    "password": "string"
+  }
+  ```
+- **Response 201:**
+  ```json
+  {
+    "id": 1,
+    "username": "string",
+    "role": "user"
+  }
+  ```
+- **Response 409:** Username already exists
+
+---
 
 #### `POST /auth/login`
 
@@ -151,6 +176,29 @@
   ```
 - **Response 401:** Unauthenticated
 - **Response 409:** Username already taken
+
+---
+
+#### `PATCH /users/me/password`
+
+- **Description:** Update the current authenticated user's password and revoke all refresh tokens for the user.
+- **Auth:** Bearer token (JWT)
+- **Request Body:**
+  ```json
+  {
+    "current_password": "string",
+    "new_password": "string"
+  }
+  ```
+- **Response 200:**
+  ```json
+  {
+    "id": 1,
+    "username": "string",
+    "role": "string"
+  }
+  ```
+- **Response 401:** Unauthenticated or invalid current password
 
 ---
 
@@ -439,39 +487,39 @@
 |-----|------:|
 | health | 1 |
 | system | 1 |
-| auth | 3 |
-| users | 2 |
+| auth | 4 |
+| users | 3 |
 | notes | 4 |
 | admin | 6 |
-| **Total** | **17** |
+| **Total** | **19** |
 
 ### HTTP Method Distribution
 
 | Method | Count |
 |--------|------:|
 | GET | 8 |
-| POST | 4 |
-| PATCH | 3 |
+| POST | 5 |
+| PATCH | 4 |
 | DELETE | 2 |
-| **Total** | **17** |
+| **Total** | **19** |
 
 ### Auth Requirements
 
 | Category | Count |
 |----------|------:|
-| No auth required | 4 |
-| Auth required (any role) | 7 |
+| No auth required | 5 |
+| Auth required (any role) | 8 |
 | Auth required (admin only) | 6 |
-| **Total** | **17** |
+| **Total** | **19** |
 
 ### Status Code Usage
 
 | Status Code | Meaning | Endpoint Count |
 |-------------|---------|:--------------:|
-| 200 | OK | 13 |
-| 201 | Created | 2 |
+| 200 | OK | 14 |
+| 201 | Created | 3 |
 | 204 | No Content | 2 |
-| 401 | Unauthorized | 15 |
+| 401 | Unauthorized | 16 |
 | 403 | Forbidden | 10 |
 | 404 | Not Found | 6 |
-| 409 | Conflict | 4 |
+| 409 | Conflict | 5 |

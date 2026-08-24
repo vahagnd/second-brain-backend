@@ -20,3 +20,10 @@ notes_files/
 # Docs
 PROMPT.md
 PLAN.md
+dont_commit.ipynb
+
+# Coding agents
+.kilo/
+
+# Opencode
+traces/

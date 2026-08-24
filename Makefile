@@ -65,3 +65,9 @@ tests-notes:
 
 tests-auth:
 	uv run --env-file .env pytest tests -m auth
+
+# ===================================================================
+# Coding agents
+# ===================================================================
+opencode:
+	OPENROUTER_API_KEY=$$(grep '^OPENROUTER_API_KEY=' .env | cut -d '=' -f2-) opencode
